@@ -3,66 +3,66 @@ import { Lock, CloudOff, Smartphone } from "lucide-react";
 
 const PrivacySection = () => {
   return (
-    <section className="py-32 bg-foreground text-background">
+    <section className="py-32 lg:py-40 bg-foreground text-background">
       <div className="container">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8 }}
           className="text-center max-w-3xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background/10 text-sm font-medium mb-8">
-            <Lock className="w-4 h-4" />
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-background/10 text-sm font-light tracking-wide mb-10">
+            <Lock className="w-4 h-4" strokeWidth={1.5} />
             <span>Privacy First</span>
           </div>
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extralight tracking-[-0.03em] mb-6">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl mb-8">
             No cloud. No tracking.
             <br />
-            <span className="text-background/50">100% offline answers.</span>
+            <span className="text-background/40">100% offline answers.</span>
           </h2>
 
-          <div className="flex justify-center gap-8 mt-12 mb-8">
+          <div className="flex justify-center gap-10 lg:gap-16 mt-14 mb-10">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-              className="flex flex-col items-center gap-2"
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="flex flex-col items-center gap-3"
             >
               <div className="w-16 h-16 rounded-full bg-background/10 flex items-center justify-center">
-                <CloudOff className="w-7 h-7" />
+                <CloudOff className="w-6 h-6" strokeWidth={1.5} />
               </div>
-              <span className="text-sm text-background/70">No Cloud</span>
+              <span className="text-sm text-background/60 font-light">No Cloud</span>
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              className="flex flex-col items-center gap-2"
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex flex-col items-center gap-3"
             >
               <div className="w-16 h-16 rounded-full bg-background/10 flex items-center justify-center">
-                <Smartphone className="w-7 h-7" />
+                <Smartphone className="w-6 h-6" strokeWidth={1.5} />
               </div>
-              <span className="text-sm text-background/70">On Device</span>
+              <span className="text-sm text-background/60 font-light">On Device</span>
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-              className="flex flex-col items-center gap-2"
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="flex flex-col items-center gap-3"
             >
               <div className="w-16 h-16 rounded-full bg-background/10 flex items-center justify-center">
-                <Lock className="w-7 h-7" />
+                <Lock className="w-6 h-6" strokeWidth={1.5} />
               </div>
-              <span className="text-sm text-background/70">Private</span>
+              <span className="text-sm text-background/60 font-light">Private</span>
             </motion.div>
           </div>
 
-          <p className="text-background/60 text-lg max-w-md mx-auto">
+          <p className="text-background/50 text-lg font-light max-w-md mx-auto leading-relaxed">
             Your notes stay on your phone.
             <br />
             Your voice never leaves your device.

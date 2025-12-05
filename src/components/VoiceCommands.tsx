@@ -10,20 +10,19 @@ const commands = [
 
 const VoiceCommands = () => {
   return (
-    <section className="py-32 bg-background">
+    <section className="py-32 lg:py-40 bg-background">
       <div className="container">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary text-sm font-medium mb-6">
-            <span>🔊</span>
-            <span>Voice Commands</span>
+          <div className="inline-flex items-center px-5 py-2 rounded-full bg-secondary text-sm font-light tracking-wide mb-8">
+            Voice Commands
           </div>
-          <h2 className="text-4xl md:text-5xl font-extralight tracking-[-0.03em]">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl">
             Just say it.
           </h2>
         </motion.div>
@@ -32,20 +31,19 @@ const VoiceCommands = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto"
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto"
         >
           {commands.map((command, index) => (
             <motion.div
               key={command}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              whileHover={{ scale: 1.05 }}
-              className="px-6 py-4 rounded-2xl border border-border bg-card subtle-shadow hover:hover-shadow transition-all duration-300 cursor-default"
+              transition={{ duration: 0.5, delay: index * 0.08 }}
+              className="px-6 py-4 rounded-full border border-border/60 bg-background hover:border-border transition-colors duration-300 cursor-default"
             >
-              <span className="text-lg font-light">"{command}"</span>
+              <span className="text-base font-light">"{command}"</span>
             </motion.div>
           ))}
         </motion.div>
@@ -54,10 +52,10 @@ const VoiceCommands = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="text-center text-muted-foreground mt-12 tracking-widest text-sm uppercase"
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="text-center text-muted-foreground mt-16 tracking-[0.25em] text-xs uppercase font-light"
         >
-          Minimal. Fast. Private.
+          Minimal · Fast · Private
         </motion.p>
       </div>
     </section>

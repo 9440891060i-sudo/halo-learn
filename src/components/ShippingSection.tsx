@@ -10,19 +10,19 @@ const features = [
 
 const ShippingSection = () => {
   return (
-    <section className="py-24 bg-background border-y border-border">
+    <section className="py-24 lg:py-32 bg-background border-y border-border/50">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
         >
-          <h2 className="text-2xl md:text-3xl font-light tracking-tight mb-2">
+          <h2 className="text-3xl sm:text-4xl mb-3">
             All-India Shipping
           </h2>
-          <p className="text-muted-foreground font-light tracking-wide">
+          <p className="text-muted-foreground font-light">
             Safe. Tested. Student-Friendly.
           </p>
         </motion.div>
@@ -31,22 +31,22 @@ const ShippingSection = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-8 md:gap-16"
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="flex flex-wrap justify-center gap-12 lg:gap-20"
         >
           {features.map((feature, index) => (
             <motion.div
               key={feature.label}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="flex flex-col items-center gap-3 text-center"
+              transition={{ duration: 0.5, delay: index * 0.08 }}
+              className="flex flex-col items-center gap-4 text-center"
             >
               <div className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center">
-                <feature.icon className="w-6 h-6" />
+                <feature.icon className="w-5 h-5" strokeWidth={1.5} />
               </div>
-              <span className="text-sm font-light">{feature.label}</span>
+              <span className="text-sm font-light text-muted-foreground">{feature.label}</span>
             </motion.div>
           ))}
         </motion.div>
@@ -55,10 +55,10 @@ const ShippingSection = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="text-center text-muted-foreground mt-10"
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-center text-muted-foreground mt-14 font-light"
         >
-          📦 Order anywhere in India.
+          Order anywhere in India.
         </motion.p>
       </div>
     </section>
