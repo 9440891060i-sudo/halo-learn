@@ -19,10 +19,10 @@ const ShippingSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-2">
-            🌍 All-India Shipping
+          <h2 className="text-2xl md:text-3xl font-light tracking-tight mb-2">
+            All-India Shipping
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground font-light tracking-wide">
             Safe. Tested. Student-Friendly.
           </p>
         </motion.div>
@@ -46,7 +46,7 @@ const ShippingSection = () => {
               <div className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center">
                 <feature.icon className="w-6 h-6" />
               </div>
-              <span className="text-sm font-medium">{feature.label}</span>
+              <span className="text-sm font-light">{feature.label}</span>
             </motion.div>
           ))}
         </motion.div>
