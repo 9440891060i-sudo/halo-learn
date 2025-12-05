@@ -119,10 +119,22 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: "Outfit", system-ui, sans-serif;
+    font-weight: 300;
+    letter-spacing: -0.01em;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold tracking-tight;
+  h1 {
+    @apply font-light tracking-tight;
+    letter-spacing: -0.03em;
+  }
+
+  h2 {
+    @apply font-light tracking-tight;
+    letter-spacing: -0.02em;
+  }
+
+  h3, h4, h5, h6 {
+    @apply font-normal tracking-tight;
   }
 }
 

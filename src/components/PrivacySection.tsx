@@ -17,10 +17,10 @@ const PrivacySection = () => {
             <span>Privacy First</span>
           </div>
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extralight tracking-[-0.03em] mb-6">
             No cloud. No tracking.
             <br />
-            <span className="text-background/60">100% offline answers.</span>
+            <span className="text-background/50">100% offline answers.</span>
           </h2>
 
           <div className="flex justify-center gap-8 mt-12 mb-8">

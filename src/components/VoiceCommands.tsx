@@ -23,7 +23,7 @@ const VoiceCommands = () => {
             <span>🔊</span>
             <span>Voice Commands</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-extralight tracking-[-0.03em]">
             Just say it.
           </h2>
         </motion.div>
@@ -45,7 +45,7 @@ const VoiceCommands = () => {
               whileHover={{ scale: 1.05 }}
               className="px-6 py-4 rounded-2xl border border-border bg-card subtle-shadow hover:hover-shadow transition-all duration-300 cursor-default"
             >
-              <span className="text-lg font-medium">"{command}"</span>
+              <span className="text-lg font-light">"{command}"</span>
             </motion.div>
           ))}
         </motion.div>

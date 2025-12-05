@@ -17,10 +17,10 @@ const BundleOffer = () => {
             <span>Limited Time Offer</span>
           </div>
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extralight tracking-[-0.03em]">
             Bundle & Save.
             <br />
-            <span className="text-background/60">Learn Faster.</span>
+            <span className="text-background/50">Learn Faster.</span>
           </h2>
 
           <p className="text-xl text-background/70">
@@ -28,9 +28,9 @@ const BundleOffer = () => {
           </p>
 
           <div className="flex flex-col items-center gap-2">
-            <div className="text-5xl md:text-6xl font-bold">₹3,998</div>
-            <div className="text-background/50 line-through">₹4,996</div>
-            <div className="text-sm text-background/70">Save ₹999</div>
+            <div className="text-5xl md:text-6xl font-light tracking-tight">₹3,998</div>
+            <div className="text-background/40 line-through font-light">₹4,996</div>
+            <div className="text-sm text-background/60 font-light tracking-wide">Save ₹999</div>
           </div>
 
           <p className="text-background/60 text-lg max-w-xl mx-auto">

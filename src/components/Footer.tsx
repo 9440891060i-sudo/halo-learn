@@ -11,8 +11,8 @@ const Footer = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-6"
         >
-          <div className="text-2xl font-semibold">🕶 Smart Study Glasses™</div>
-          <p className="text-muted-foreground">
+          <div className="text-xl font-light tracking-wide">Smart Study Glasses</div>
+          <p className="text-muted-foreground font-light">
             Hands-Free AI Learning
           </p>
 

@@ -12,9 +12,9 @@ const HeroSection = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-xl font-semibold tracking-tight"
+            className="text-lg font-normal tracking-wide"
           >
-            🕶 StudyGlasses
+            StudyGlasses
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -38,12 +38,12 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="space-y-4"
             >
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extralight leading-[1.05] tracking-[-0.04em]">
                 The Smarter Way
                 <br />
                 <span className="text-muted-foreground">to Study.</span>
               </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground font-light">
+              <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
                 AI Glasses for Hands-Free Learning.
               </p>
             </motion.div>

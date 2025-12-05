@@ -59,7 +59,7 @@ const FeaturesSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-20"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extralight tracking-[-0.03em] mb-6">
             Study without looking
             <br />
             <span className="text-muted-foreground">at your phone.</span>
@@ -84,8 +84,8 @@ const FeaturesSection = () => {
               <div className="w-12 h-12 rounded-xl bg-foreground text-background flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <feature.icon className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.description}</p>
+              <h3 className="text-lg font-normal mb-2">{feature.title}</h3>
+              <p className="text-muted-foreground font-light">{feature.description}</p>
             </motion.div>
           ))}
         </motion.div>
