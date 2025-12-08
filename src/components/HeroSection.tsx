@@ -71,18 +71,17 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-lg text-muted-foreground font-extralight max-w-lg mx-auto"
+            className="text-lg text-muted-foreground font-extralight max-w-lg mx-auto leading-relaxed"
           >
             Upload your notes to our app. Connect your glasses.
-            <br />
-            Ask anything. Hear answers instantly.
+            <span className="block">Ask anything. Hear answers instantly.</span>
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.7 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center pt-4"
+            className="flex flex-col sm:flex-row gap-4 justify-center pt-6"
           >
             <Button variant="hero" size="xl">
               Buy Glasses — ₹2,999
@@ -96,7 +95,7 @@ const HeroSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.9 }}
-            className="text-sm text-muted-foreground/60 font-extralight pt-2"
+            className="text-sm text-muted-foreground/60 font-extralight mt-6"
           >
             ₹999/month for AI app · Free shipping across India
           </motion.p>
