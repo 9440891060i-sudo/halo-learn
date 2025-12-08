@@ -4,28 +4,28 @@ import { Upload, Mic, Volume2, RotateCcw, WifiOff } from "lucide-react";
 const features = [
   {
     icon: Upload,
-    title: "Upload Everything",
-    description: "PDFs, notes, books — directly into the app",
+    title: "Upload to App",
+    description: "PDFs, notes, books — all in our AI app on your phone",
   },
   {
     icon: Mic,
-    title: "Ask Any Question",
-    description: "Use your voice, get instant answers",
+    title: "Speak Through Glasses",
+    description: "Ask questions using the built-in microphone",
   },
   {
     icon: Volume2,
-    title: "Hear Through Glasses",
-    description: "Hidden open-ear speakers deliver responses",
+    title: "Listen Instantly",
+    description: "Open-ear speakers deliver AI answers from your phone",
   },
   {
     icon: RotateCcw,
-    title: "Full Control",
-    description: "Pause, rewind, skip, repeat — hands-free",
+    title: "Full Voice Control",
+    description: "Pause, rewind, skip, repeat — completely hands-free",
   },
   {
     icon: WifiOff,
     title: "Works Offline",
-    description: "No SIM. No WiFi. Complete privacy.",
+    description: "AI runs locally on your phone. No internet needed.",
   },
 ];
 
@@ -59,11 +59,18 @@ const FeaturesSection = () => {
           transition={{ duration: 0.8 }}
           className="text-center max-w-3xl mx-auto mb-20"
         >
+          <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground/60 font-extralight mb-6">
+            How it works
+          </p>
           <h2 className="text-4xl sm:text-5xl lg:text-6xl mb-6">
-            Study without looking
+            AI in your pocket.
             <br />
-            <span className="text-muted-foreground">at your phone.</span>
+            <span className="text-muted-foreground">Sound in your ears.</span>
           </h2>
+          <p className="text-lg text-muted-foreground font-extralight max-w-xl mx-auto">
+            The glasses connect to your phone via Bluetooth. 
+            All the AI magic happens in our app.
+          </p>
         </motion.div>
 
         <motion.div
@@ -77,15 +84,15 @@ const FeaturesSection = () => {
             <motion.div
               key={feature.title}
               variants={itemVariants}
-              className={`group p-8 lg:p-10 rounded-2xl bg-background border border-border/50 hover:border-border transition-colors duration-300 ${
+              className={`group p-8 lg:p-10 rounded-2xl bg-background border border-border/30 hover:border-border/60 transition-colors duration-300 ${
                 index === 4 ? "sm:col-span-2 lg:col-span-1 lg:col-start-2" : ""
               }`}
             >
-              <div className="w-11 h-11 rounded-full bg-foreground text-background flex items-center justify-center mb-6">
-                <feature.icon className="w-5 h-5" strokeWidth={1.5} />
+              <div className="w-10 h-10 rounded-full bg-foreground text-background flex items-center justify-center mb-6">
+                <feature.icon className="w-4 h-4" strokeWidth={1.5} />
               </div>
-              <h3 className="text-lg mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground font-light leading-relaxed">{feature.description}</p>
+              <h3 className="text-base font-normal mb-2">{feature.title}</h3>
+              <p className="text-muted-foreground font-extralight text-sm leading-relaxed">{feature.description}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -95,9 +102,9 @@ const FeaturesSection = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-center text-xl text-muted-foreground font-light mt-20"
+          className="text-center text-lg text-muted-foreground/60 font-extralight mt-20"
         >
-          Your AI. Your Notes. Your Study Glasses.
+          Phone + Glasses = Your personal study assistant.
         </motion.p>
       </div>
     </section>

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import heroGlasses from "@/assets/hero-glasses.jpg";
+import glassesHero from "@/assets/glasses-hero.png";
 
 const HeroSection = () => {
   return (
@@ -28,75 +28,78 @@ const HeroSection = () => {
         </div>
       </nav>
 
-      <div className="container pt-28 pb-16">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center min-h-[85vh]">
-          {/* Left Content */}
-          <div className="space-y-10">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="space-y-6"
-            >
-              <h1 className="text-[clamp(2.5rem,5vw,5rem)] leading-[1.05]">
-                <span className="block whitespace-nowrap">The Smarter Way</span>
-                <span className="block">to Study.</span>
-              </h1>
-              <p className="text-xl sm:text-2xl text-muted-foreground font-light">
-                AI Glasses for Hands-Free Learning.
-              </p>
-            </motion.div>
-
-            <motion.p
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-lg text-muted-foreground max-w-md font-light leading-relaxed"
-            >
-              Looks like normal glasses.
-              <br />
-              Works like your personal offline AI teacher.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="flex flex-col sm:flex-row gap-4 pt-2"
-            >
-              <Button variant="hero" size="xl">
-                Buy Glasses — ₹2,999
-              </Button>
-              <Button variant="heroOutline" size="xl">
-                Get Bundle
-              </Button>
-            </motion.div>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="text-sm text-muted-foreground font-light"
-            >
-              ₹999/month for AI · Free shipping across India
-            </motion.p>
-          </div>
-
-          {/* Right Content - Product Image */}
+      <div className="container pt-32 pb-20 flex flex-col items-center justify-center min-h-screen">
+        {/* Centered Content */}
+        <div className="text-center space-y-8 max-w-4xl">
           <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="relative flex items-center justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="space-y-4"
           >
-            <div className="relative w-full max-w-xl">
-              <img
-                src={heroGlasses}
-                alt="Smart Study Glasses - AI-powered hands-free learning device"
-                className="relative w-full h-auto rounded-3xl"
-              />
-            </div>
+            <h1 className="text-[clamp(2.5rem,6vw,6rem)] leading-[1.02] tracking-tight">
+              The Smarter Way
+              <br />
+              <span className="text-muted-foreground">to Study.</span>
+            </h1>
           </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-xl sm:text-2xl text-muted-foreground font-extralight"
+          >
+            AI lives in your phone. Glasses let you listen and speak.
+          </motion.p>
+
+          {/* Product Image - Centered */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="py-12"
+          >
+            <img
+              src={glassesHero}
+              alt="Smart Study Glasses - Bluetooth audio glasses for hands-free learning"
+              className="w-full max-w-2xl mx-auto"
+            />
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="text-lg text-muted-foreground font-extralight max-w-lg mx-auto"
+          >
+            Upload your notes to our app. Connect your glasses.
+            <br />
+            Ask anything. Hear answers instantly.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center pt-4"
+          >
+            <Button variant="hero" size="xl">
+              Buy Glasses — ₹2,999
+            </Button>
+            <Button variant="heroOutline" size="xl">
+              Get Bundle
+            </Button>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.9 }}
+            className="text-sm text-muted-foreground/60 font-extralight pt-2"
+          >
+            ₹999/month for AI app · Free shipping across India
+          </motion.p>
         </div>
       </div>
 
@@ -105,11 +108,11 @@ const HeroSection = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 1.2 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
       >
-        <div className="flex flex-col items-center gap-3 text-muted-foreground">
-          <span className="text-[11px] tracking-[0.2em] uppercase font-light">Scroll</span>
-          <div className="w-px h-10 bg-gradient-to-b from-muted-foreground/50 to-transparent" />
+        <div className="flex flex-col items-center gap-3 text-muted-foreground/50">
+          <span className="text-[10px] tracking-[0.25em] uppercase font-extralight">Scroll</span>
+          <div className="w-px h-8 bg-gradient-to-b from-muted-foreground/30 to-transparent" />
         </div>
       </motion.div>
     </section>

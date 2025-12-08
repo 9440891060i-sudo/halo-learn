@@ -12,30 +12,29 @@ const BundleOffer = () => {
           transition={{ duration: 0.8 }}
           className="text-center max-w-3xl mx-auto space-y-10"
         >
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-background/10 text-sm font-light tracking-wide">
-            Limited Time Offer
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-background/10 text-xs font-extralight tracking-[0.15em] uppercase">
+            Limited Time
           </div>
 
           <h2 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl">
             Bundle & Save.
-            <br />
-            <span className="text-background/40">Learn Faster.</span>
           </h2>
 
-          <p className="text-xl text-background/60 font-light">
-            AI Glasses + 3-Month Voice Assistant Subscription
+          <p className="text-lg text-background/50 font-extralight">
+            Glasses + 3-Month AI App Subscription
           </p>
 
-          <div className="flex flex-col items-center gap-3 py-4">
-            <div className="text-6xl sm:text-7xl font-extralight tracking-tight">₹3,998</div>
+          <div className="flex flex-col items-center gap-3 py-6">
+            <div className="text-6xl sm:text-7xl lg:text-8xl font-thin tracking-tight">₹3,998</div>
             <div className="flex items-center gap-4">
-              <span className="text-background/30 line-through font-light">₹4,996</span>
-              <span className="text-sm text-background/50 font-light">Save ₹999</span>
+              <span className="text-background/25 line-through font-extralight">₹4,996</span>
+              <span className="text-xs text-background/40 font-extralight tracking-wide">Save ₹999</span>
             </div>
           </div>
 
-          <p className="text-background/50 text-lg font-light max-w-lg mx-auto">
-            Ask questions, revise chapters, search PDFs — just by speaking.
+          <p className="text-background/40 font-extralight max-w-md mx-auto">
+            Upload your study material to the app. Connect the glasses.
+            Start learning hands-free.
           </p>
 
           <motion.div
