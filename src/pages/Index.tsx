@@ -1,5 +1,6 @@
 import HeroSection from "@/components/HeroSection";
 import BundleOffer from "@/components/BundleOffer";
+import AppPreview from "@/components/AppPreview";
 import FeaturesSection from "@/components/FeaturesSection";
 import VoiceCommands from "@/components/VoiceCommands";
 import PricingSection from "@/components/PricingSection";
@@ -12,6 +13,7 @@ const Index = () => {
     <main className="overflow-hidden">
       <HeroSection />
       <BundleOffer />
+      <AppPreview />
       <FeaturesSection />
       <VoiceCommands />
       <PricingSection />
