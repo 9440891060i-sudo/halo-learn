@@ -84,10 +84,7 @@ const HeroSection = () => {
             className="flex flex-col sm:flex-row gap-4 justify-center pt-6"
           >
             <Button variant="hero" size="xl">
-              Buy Glasses — ₹2,999
-            </Button>
-            <Button variant="heroOutline" size="xl">
-              Get Bundle
+              Buy Glasses — ₹3,999
             </Button>
           </motion.div>
 
@@ -97,7 +94,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.9 }}
             className="text-sm text-muted-foreground/60 font-extralight mt-6"
           >
-            ₹999/month for AI app · Free shipping across India
+            Includes 3 months free AI subscription · Free shipping
           </motion.p>
         </div>
       </div>

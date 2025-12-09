@@ -39,7 +39,7 @@ const PricingSection = () => {
             <ul className="space-y-4 mb-12 text-background/70 font-light">
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-background flex-shrink-0" strokeWidth={1.5} />
-                <span>Premium smart glasses</span>
+                <span>AI-optimized directional speakers</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-background flex-shrink-0" strokeWidth={1.5} />
@@ -47,11 +47,11 @@ const PricingSection = () => {
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-background flex-shrink-0" strokeWidth={1.5} />
-                <span>Bluetooth open-ear audio</span>
+                <span>Voice-tuned microphone array</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-background flex-shrink-0" strokeWidth={1.5} />
-                <span>Built-in microphone</span>
+                <span>Instant pairing with Study AI app</span>
               </li>
             </ul>
             <Button
