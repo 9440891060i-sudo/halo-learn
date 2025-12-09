@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import Glasses3D from "./Glasses3D";
+import glassesHero from "@/assets/glasses-hero.png";
+
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen hero-gradient overflow-hidden">
@@ -52,14 +53,18 @@ const HeroSection = () => {
             AI lives in your phone. Glasses let you listen and speak.
           </motion.p>
 
-          {/* 3D Glasses - Interactive */}
+          {/* Product Image - Centered */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="py-8"
+            className="py-12"
           >
-            <Glasses3D />
+            <img
+              src={glassesHero}
+              alt="Smart Study Glasses - Bluetooth audio glasses for hands-free learning"
+              className="w-full max-w-2xl mx-auto"
+            />
           </motion.div>
 
           <motion.p
