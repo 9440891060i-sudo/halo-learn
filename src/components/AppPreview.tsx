@@ -171,9 +171,9 @@ const AppPreview = () => {
                   2
                 </div>
                 <div>
-                  <h3 className="text-lg font-light mb-1">Connect your glasses via Bluetooth</h3>
+                  <h3 className="text-lg font-light mb-1">Instant pairing with your glasses</h3>
                   <p className="text-muted-foreground font-extralight text-sm">
-                    One-tap pairing. Your glasses become your personal audio interface.
+                    One-tap connection. Low-latency audio syncs seamlessly with the app.
                   </p>
                 </div>
               </div>
@@ -183,9 +183,9 @@ const AppPreview = () => {
                   3
                 </div>
                 <div>
-                  <h3 className="text-lg font-light mb-1">Ask questions out loud</h3>
+                  <h3 className="text-lg font-light mb-1">Ask questions naturally</h3>
                   <p className="text-muted-foreground font-extralight text-sm">
-                    The glasses capture your voice and send it to the app for processing.
+                    Voice-optimized microphones capture every word with precision.
                   </p>
                 </div>
               </div>
@@ -195,9 +195,9 @@ const AppPreview = () => {
                   4
                 </div>
                 <div>
-                  <h3 className="text-lg font-light mb-1">Hear instant answers</h3>
+                  <h3 className="text-lg font-light mb-1">Hear crystal-clear answers</h3>
                   <p className="text-muted-foreground font-extralight text-sm">
-                    Responses play through the open-ear speakers. Hands-free, eyes-free.
+                    Directional speakers deliver responses only you can hear.
                   </p>
                 </div>
               </div>

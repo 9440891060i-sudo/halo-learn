@@ -5,27 +5,27 @@ const features = [
   {
     icon: Upload,
     title: "Upload to App",
-    description: "PDFs, notes, books — all in our AI app on your phone",
+    description: "PDFs, notes, textbooks — processed by our on-device AI",
   },
   {
     icon: Mic,
-    title: "Speak Through Glasses",
-    description: "Ask questions using the built-in microphone",
+    title: "Voice-Activated Commands",
+    description: "AI-optimized microphone captures your questions clearly",
   },
   {
     icon: Volume2,
-    title: "Listen Instantly",
-    description: "Open-ear speakers deliver AI answers from your phone",
+    title: "Crystal Clear Responses",
+    description: "Directional speakers deliver answers with low-latency audio",
   },
   {
     icon: RotateCcw,
-    title: "Full Voice Control",
-    description: "Pause, rewind, skip, repeat — completely hands-free",
+    title: "Seamless Voice Control",
+    description: "Pause, skip, repeat — natural voice commands, zero friction",
   },
   {
     icon: WifiOff,
-    title: "Works Offline",
-    description: "AI runs locally on your phone. No internet needed.",
+    title: "Private & Offline",
+    description: "All processing stays on your device. No cloud. No tracking.",
   },
 ];
 
@@ -63,13 +63,13 @@ const FeaturesSection = () => {
             How it works
           </p>
           <h2 className="text-4xl sm:text-5xl lg:text-6xl mb-6">
-            AI in your pocket.
+            Engineered for focus.
             <br />
-            <span className="text-muted-foreground">Sound in your ears.</span>
+            <span className="text-muted-foreground">Designed for learning.</span>
           </h2>
           <p className="text-lg text-muted-foreground font-extralight max-w-xl mx-auto">
-            The glasses connect to your phone via Bluetooth. 
-            All the AI magic happens in our app.
+            Premium audio glasses paired with intelligent AI software.
+            A seamless study experience.
           </p>
         </motion.div>
 
@@ -104,7 +104,7 @@ const FeaturesSection = () => {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="text-center text-lg text-muted-foreground/60 font-extralight mt-20"
         >
-          Phone + Glasses = Your personal study assistant.
+          Built for students. Optimized for focus.
         </motion.p>
       </div>
     </section>
