@@ -1,7 +1,6 @@
 import HeroSection from "@/components/HeroSection";
 import BundleOffer from "@/components/BundleOffer";
 import AppPreview from "@/components/AppPreview";
-import FeaturesSection from "@/components/FeaturesSection";
 import VoiceCommands from "@/components/VoiceCommands";
 import PricingSection from "@/components/PricingSection";
 import ShippingSection from "@/components/ShippingSection";
@@ -14,7 +13,6 @@ const Index = () => {
       <HeroSection />
       <BundleOffer />
       <AppPreview />
-      <FeaturesSection />
       <VoiceCommands />
       <PricingSection />
       <ShippingSection />
