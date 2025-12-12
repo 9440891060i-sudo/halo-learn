@@ -1,11 +1,10 @@
 import { motion } from "framer-motion";
-import { Truck, RefreshCw, Shield, Package } from "lucide-react";
+import { Truck, Shield, Package } from "lucide-react";
 
 const features = [
   { icon: Truck, label: "Fast Delivery" },
-  { icon: RefreshCw, label: "7-Day Replacement" },
-  { icon: Shield, label: "1-Year Warranty" },
-  { icon: Package, label: "All-India Shipping" },
+  { icon: Package, label: "Secure Packaging" },
+  { icon: Shield, label: "Track Your Order" },
 ];
 
 const ShippingSection = () => {
