@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Lock, CloudOff, Smartphone, ShieldOff } from "lucide-react";
+import { Lock, Smartphone, ShieldOff } from "lucide-react";
 
 const PrivacySection = () => {
   return (
@@ -32,9 +32,9 @@ const PrivacySection = () => {
               className="flex flex-col items-center gap-3"
             >
               <div className="w-16 h-16 rounded-full bg-background/10 flex items-center justify-center">
-                <CloudOff className="w-6 h-6" strokeWidth={1.5} />
+                <ShieldOff className="w-6 h-6" strokeWidth={1.5} />
               </div>
-              <span className="text-sm text-background/60 font-light">No Cloud</span>
+              <span className="text-sm text-background/60 font-light">Jam-Proof</span>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -59,18 +59,6 @@ const PrivacySection = () => {
                 <Lock className="w-6 h-6" strokeWidth={1.5} />
               </div>
               <span className="text-sm text-background/60 font-light">Private</span>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              className="flex flex-col items-center gap-3"
-            >
-              <div className="w-16 h-16 rounded-full bg-background/10 flex items-center justify-center">
-                <ShieldOff className="w-6 h-6" strokeWidth={1.5} />
-              </div>
-              <span className="text-sm text-background/60 font-light">No Jamming</span>
             </motion.div>
           </div>
 
