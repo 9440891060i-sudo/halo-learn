@@ -64,7 +64,7 @@ const AppPreview = () => {
                       <div className="flex items-center justify-between mb-6">
                         <div>
                           <p className="text-xs text-muted-foreground">Good morning</p>
-                          <h3 className="text-xl font-light">Study AI</h3>
+                          <h3 className="text-xl font-light">Tricher</h3>
                         </div>
                         <div className="w-9 h-9 rounded-full bg-foreground/10 flex items-center justify-center">
                           <span className="text-sm">👤</span>

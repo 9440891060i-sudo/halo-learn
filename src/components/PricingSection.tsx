@@ -33,7 +33,7 @@ const PricingSection = () => {
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-background text-foreground text-xs tracking-wide">
               Best Value
             </div>
-            <h3 className="text-lg font-light mb-8">Smart Study Glasses</h3>
+            <h3 className="text-lg font-light mb-8">Tricher Glasses</h3>
             <div className="text-5xl font-extralight mb-3 tracking-tight">₹3,999</div>
             <p className="text-background/50 text-sm font-light mb-10">One-time purchase</p>
             <ul className="space-y-4 mb-12 text-background/70 font-light">
@@ -51,7 +51,7 @@ const PricingSection = () => {
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-background flex-shrink-0" strokeWidth={1.5} />
-                <span>Instant pairing with Study AI app</span>
+                <span>Instant pairing with Tricher App</span>
               </li>
             </ul>
             <Button
