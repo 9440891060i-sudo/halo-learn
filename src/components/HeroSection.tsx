@@ -14,7 +14,7 @@ const HeroSection = () => {
             transition={{ duration: 0.6 }}
             className="text-base font-normal tracking-tight"
           >
-            StudyGlasses
+            Tricher
           </motion.div>
           <motion.div
             initial={{ opacity: 0 }}
@@ -62,7 +62,7 @@ const HeroSection = () => {
           >
             <img
               src={glassesHero}
-              alt="Smart Study Glasses - Bluetooth audio glasses for hands-free learning"
+              alt="Tricher Glasses - Bluetooth audio glasses for hands-free learning"
               className="w-full max-w-2xl mx-auto"
             />
           </motion.div>
