@@ -1,5 +1,4 @@
 import HeroSection from "@/components/HeroSection";
-import GlassesSpecs from "@/components/GlassesSpecs";
 import BundleOffer from "@/components/BundleOffer";
 import AppPreview from "@/components/AppPreview";
 import VoiceCommands from "@/components/VoiceCommands";
@@ -12,7 +11,6 @@ const Index = () => {
   return (
     <main className="overflow-hidden">
       <HeroSection />
-      <GlassesSpecs />
       <BundleOffer />
       <AppPreview />
       <VoiceCommands />
