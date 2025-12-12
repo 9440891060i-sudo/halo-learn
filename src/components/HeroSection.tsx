@@ -38,9 +38,9 @@ const HeroSection = () => {
             className="space-y-4"
           >
             <h1 className="text-[clamp(2.5rem,6vw,6rem)] leading-[1.02] tracking-tight">
-              The Smarter Way
+              Stay on Call
               <br />
-              <span className="text-muted-foreground">to Study.</span>
+              <span className="text-muted-foreground">with Your AI.</span>
             </h1>
           </motion.div>
 
@@ -50,7 +50,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-xl sm:text-2xl text-muted-foreground font-extralight"
           >
-            AI lives in your phone. Glasses let you listen and speak.
+            100% offline. No internet needed. Ever.
           </motion.p>
 
           {/* Product Image - Centered */}
@@ -73,8 +73,8 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-lg text-muted-foreground font-extralight max-w-lg mx-auto leading-relaxed"
           >
-            Upload your notes to our app. Connect your glasses.
-            <span className="block">Ask anything. Hear answers instantly.</span>
+            Upload your notes. Connect your glasses.
+            <span className="block">Ask questions anytime, get answers instantly.</span>
           </motion.p>
 
           <motion.div
