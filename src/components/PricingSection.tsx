@@ -96,7 +96,12 @@ const PricingSection = () => {
                 <span>For existing glass owners</span>
               </li>
             </ul>
-            <Button variant="heroOutline" size="lg" className="w-full">
+            <Button
+              variant="heroOutline"
+              size="lg"
+              className="w-full"
+              onClick={() => navigate("/subscribe")}
+            >
               Subscribe
             </Button>
           </motion.div>
