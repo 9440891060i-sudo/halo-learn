@@ -8,13 +8,13 @@ const HeroSection = () => {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border/40">
         <div className="container flex items-center justify-between h-14">
-          <motion.div
+            <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
             className="text-base font-normal tracking-tight"
           >
-            Tricher
+            Tricher tools
           </motion.div>
           <motion.div
             initial={{ opacity: 0 }}
@@ -40,7 +40,7 @@ const HeroSection = () => {
             <h1 className="text-[clamp(2.5rem,6vw,6rem)] leading-[1.02] tracking-tight">
               Stay on Call
               <br />
-              <span className="text-muted-foreground">with Your AI.</span>
+              <span className="text-muted-foreground">with AI.</span>
             </h1>
           </motion.div>
 
@@ -84,7 +84,7 @@ const HeroSection = () => {
             className="flex flex-col sm:flex-row gap-4 justify-center pt-6"
           >
             <Button variant="hero" size="xl">
-              Buy Glasses — ₹3,999
+              Buy Glasses — ₹4,499
             </Button>
           </motion.div>
 

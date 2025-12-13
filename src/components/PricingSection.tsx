@@ -37,7 +37,7 @@ const PricingSection = () => {
               Best Value
             </div>
             <h3 className="text-lg font-light mb-8">Tricher Glasses</h3>
-            <div className="text-5xl font-extralight mb-3 tracking-tight">₹3,999</div>
+            <div className="text-5xl font-extralight mb-3 tracking-tight">₹4,499</div>
             <p className="text-background/50 text-sm font-light mb-10">One-time purchase</p>
             <ul className="space-y-4 mb-12 text-background/70 font-light">
               <li className="flex items-start gap-3">
