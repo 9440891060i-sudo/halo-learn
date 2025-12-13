@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const BundleOffer = () => {
+  const navigate = useNavigate();
+  
   return (
     <section className="py-16 lg:py-20 bg-foreground text-background">
       <div className="container">
@@ -41,6 +44,7 @@ const BundleOffer = () => {
               variant="hero"
               size="lg"
               className="bg-background text-foreground hover:bg-background/90"
+              onClick={() => navigate("/checkout")}
             >
               Get the Bundle
             </Button>

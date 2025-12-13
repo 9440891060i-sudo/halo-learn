@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const PricingSection = () => {
+  const navigate = useNavigate();
+  
   return (
     <section className="py-32 lg:py-40 section-alt">
       <div className="container">
@@ -58,6 +61,7 @@ const PricingSection = () => {
               variant="hero"
               size="lg"
               className="w-full bg-background text-foreground hover:bg-background/90"
+              onClick={() => navigate("/checkout")}
             >
               Buy Now
             </Button>
