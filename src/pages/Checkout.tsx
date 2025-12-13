@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, CreditCard, Banknote } from "lucide-react";
+import { ArrowLeft, CreditCard, Banknote, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +11,8 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [paymentMode, setPaymentMode] = useState<"cod" | "online" | null>(null);
+  const [discountCode, setDiscountCode] = useState("");
+  const [discountApplied, setDiscountApplied] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,8 +22,28 @@ const Checkout = () => {
     pincode: "",
   });
 
+  const basePrice = 3999;
+  const discountAmount = discountApplied ? 500 : 0;
+  const finalPrice = basePrice - discountAmount;
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleApplyDiscount = () => {
+    if (discountCode.toUpperCase() === "TRICHER500") {
+      setDiscountApplied(true);
+      toast({
+        title: "Discount Applied!",
+        description: "₹500 off on your order",
+      });
+    } else {
+      toast({
+        title: "Invalid Code",
+        description: "Please enter a valid discount code",
+        variant: "destructive",
+      });
+    }
   };
 
   const handlePlaceOrder = (e: React.FormEvent) => {
@@ -69,14 +91,46 @@ const Checkout = () => {
             transition={{ duration: 0.6 }}
           >
             {/* Order Summary */}
-            <div className="mb-12 pb-8 border-b border-border">
+            <div className="mb-8 pb-6 border-b border-border">
               <h2 className="text-sm text-muted-foreground mb-4 tracking-wide">ORDER SUMMARY</h2>
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-lg font-light">Tricher Glasses</p>
                   <p className="text-sm text-muted-foreground">+ 3 months AI subscription</p>
                 </div>
-                <p className="text-2xl font-light">₹3,999</p>
+                <p className="text-2xl font-light">₹{basePrice.toLocaleString()}</p>
+              </div>
+              {discountApplied && (
+                <div className="flex justify-between items-center mt-3 text-green-600">
+                  <p className="text-sm">Discount (TRICHER500)</p>
+                  <p className="text-sm">-₹{discountAmount}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Discount Code */}
+            <div className="mb-8 pb-6 border-b border-border">
+              <h2 className="text-sm text-muted-foreground mb-4 tracking-wide">DISCOUNT CODE</h2>
+              <div className="flex gap-3">
+                <div className="flex-1 relative">
+                  <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    value={discountCode}
+                    onChange={(e) => setDiscountCode(e.target.value)}
+                    placeholder="Enter code"
+                    className="bg-transparent border-border rounded-lg h-12 pl-10"
+                    disabled={discountApplied}
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="heroOutline"
+                  onClick={handleApplyDiscount}
+                  disabled={discountApplied || !discountCode}
+                  className="h-12 px-6"
+                >
+                  {discountApplied ? "Applied" : "Apply"}
+                </Button>
               </div>
             </div>
 
@@ -204,8 +258,12 @@ const Checkout = () => {
                 </div>
               </div>
 
-              {/* Place Order */}
+              {/* Total & Place Order */}
               <div className="pt-8">
+                <div className="flex justify-between items-center mb-6 pb-4 border-b border-border">
+                  <span className="text-lg font-light">Total</span>
+                  <span className="text-2xl font-light">₹{finalPrice.toLocaleString()}</span>
+                </div>
                 <Button
                   type="submit"
                   variant="hero"
