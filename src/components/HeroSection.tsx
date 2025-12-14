@@ -28,75 +28,74 @@ const HeroSection = () => {
         </div>
       </nav>
 
-      <div className="container pt-24 pb-16 flex items-center justify-center min-h-screen">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center w-full max-w-6xl">
-          {/* Left - Text Content */}
-          <div className="text-center lg:text-left space-y-6 order-2 lg:order-1">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <h1 className="text-[clamp(2.5rem,5vw,5rem)] leading-[1.02] tracking-tight">
-                Stay on Call
-                <br />
-                <span className="text-muted-foreground">with AI.</span>
-              </h1>
-            </motion.div>
+      <div className="container pt-32 pb-20 flex flex-col items-center justify-center min-h-screen">
+        {/* Centered Content */}
+        <div className="text-center space-y-8 max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="space-y-4"
+          >
+            <h1 className="text-[clamp(2.5rem,6vw,6rem)] leading-[1.02] tracking-tight">
+              Stay on Call
+              <br />
+              <span className="text-muted-foreground">with AI.</span>
+            </h1>
+          </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-lg sm:text-xl text-muted-foreground font-extralight"
-            >
-              100% offline. No internet needed. Ever.
-            </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-xl sm:text-2xl text-muted-foreground font-extralight"
+          >
+            100% offline. No internet needed. Ever.
+          </motion.p>
 
-            <motion.p
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="text-base text-muted-foreground/80 font-extralight max-w-md mx-auto lg:mx-0 leading-relaxed"
-            >
-              Upload your notes. Connect your glasses.
-              <span className="block">Ask questions anytime, get answers instantly.</span>
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4"
-            >
-              <Button variant="hero" size="xl">
-                Buy Glasses — ₹4,499
-              </Button>
-            </motion.div>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="text-sm text-muted-foreground/60 font-extralight"
-            >
-              Includes 3 months free AI subscription · Free shipping
-            </motion.p>
-          </div>
-
-          {/* Right - Cheetah Image */}
+          {/* Product Image - Centered */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="order-1 lg:order-2 flex justify-center"
+            transition={{ duration: 1, delay: 0.5 }}
+            className="py-8"
           >
             <img
               src={cheetahGlasses}
               alt="Cheetah wearing Tricher Glasses - AI-powered smart glasses"
-              className="w-full max-w-sm lg:max-w-md xl:max-w-lg object-contain"
+              className="w-full max-w-md mx-auto rounded-2xl"
             />
           </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="text-lg text-muted-foreground font-extralight max-w-lg mx-auto leading-relaxed"
+          >
+            Upload your notes. Connect your glasses.
+            <span className="block">Ask questions anytime, get answers instantly.</span>
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center pt-6"
+          >
+            <Button variant="hero" size="xl">
+              Buy Glasses — ₹4,499
+            </Button>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.9 }}
+            className="text-sm text-muted-foreground/60 font-extralight mt-6"
+          >
+            Includes 3 months free AI subscription · Free shipping
+          </motion.p>
         </div>
       </div>
 
