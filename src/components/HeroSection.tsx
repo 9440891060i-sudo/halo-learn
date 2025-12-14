@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import glassesHero from "@/assets/glasses-hero.png";
+import cheetahGlasses from "@/assets/cheetah-glasses.jpeg";
 
 const HeroSection = () => {
   return (
@@ -58,12 +58,12 @@ const HeroSection = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="py-12"
+            className="py-8"
           >
             <img
-              src={glassesHero}
-              alt="Tricher Glasses - Bluetooth audio glasses for hands-free learning"
-              className="w-full max-w-2xl mx-auto"
+              src={cheetahGlasses}
+              alt="Cheetah wearing Tricher Glasses - AI-powered smart glasses"
+              className="w-full max-w-md mx-auto rounded-2xl"
             />
           </motion.div>
 
