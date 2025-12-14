@@ -53,6 +53,18 @@ const HeroSection = () => {
             100% offline. No internet needed. Ever.
           </motion.p>
 
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="mt-4 px-6 py-2.5 rounded-full text-sm font-light tracking-wide
+              bg-white/10 backdrop-blur-xl border border-white/20
+              shadow-[0_8px_32px_rgba(255,255,255,0.1),inset_0_1px_0_rgba(255,255,255,0.2)]
+              hover:bg-white/15 hover:border-white/30 hover:shadow-[0_8px_32px_rgba(255,255,255,0.15)]
+              transition-all duration-300 cursor-pointer"
+          >
+            Watch Video
+          </motion.button>
         </div>
 
         {/* Product Image - Bottom */}
