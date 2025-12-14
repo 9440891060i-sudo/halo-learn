@@ -28,9 +28,9 @@ const HeroSection = () => {
         </div>
       </nav>
 
-      <div className="container pt-32 pb-20 flex flex-col items-center justify-center min-h-screen">
+      <div className="container pt-32 pb-0 flex flex-col items-center min-h-screen">
         {/* Centered Content */}
-        <div className="text-center space-y-8 max-w-4xl">
+        <div className="text-center space-y-6 max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -53,64 +53,40 @@ const HeroSection = () => {
             100% offline. No internet needed. Ever.
           </motion.p>
 
-          {/* Product Image - Centered */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="py-8"
-          >
-            <img
-              src={cheetahGlasses}
-              alt="Cheetah wearing Tricher Glasses - AI-powered smart glasses"
-              className="w-full max-w-md mx-auto rounded-2xl"
-            />
-          </motion.div>
-
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
             className="text-lg text-muted-foreground font-extralight max-w-lg mx-auto leading-relaxed"
           >
             Upload your notes. Connect your glasses.
             <span className="block">Ask questions anytime, get answers instantly.</span>
           </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center pt-6"
-          >
-            <Button variant="hero" size="xl">
-              Buy Glasses — ₹4,499
-            </Button>
-          </motion.div>
-
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
-            className="text-sm text-muted-foreground/60 font-extralight mt-6"
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="text-sm text-muted-foreground/60 font-extralight"
           >
             Includes 3 months free AI subscription · Free shipping
           </motion.p>
         </div>
-      </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1.2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <div className="flex flex-col items-center gap-3 text-muted-foreground/50">
-          <span className="text-[10px] tracking-[0.25em] uppercase font-extralight">Scroll</span>
-          <div className="w-px h-8 bg-gradient-to-b from-muted-foreground/30 to-transparent" />
-        </div>
-      </motion.div>
+        {/* Product Image - Bottom */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.7 }}
+          className="mt-auto pt-8"
+        >
+          <img
+            src={cheetahGlasses}
+            alt="Cheetah wearing Tricher Glasses - AI-powered smart glasses"
+            className="w-full max-w-lg mx-auto rounded-t-2xl"
+          />
+        </motion.div>
+      </div>
     </section>
   );
 };
