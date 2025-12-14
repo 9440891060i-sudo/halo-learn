@@ -53,24 +53,6 @@ const HeroSection = () => {
             100% offline. No internet needed. Ever.
           </motion.p>
 
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-lg text-muted-foreground font-extralight max-w-lg mx-auto leading-relaxed"
-          >
-            Upload your notes. Connect your glasses.
-            <span className="block">Ask questions anytime, get answers instantly.</span>
-          </motion.p>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-sm text-muted-foreground/60 font-extralight"
-          >
-            Includes 3 months free AI subscription · Free shipping
-          </motion.p>
         </div>
 
         {/* Product Image - Bottom */}
