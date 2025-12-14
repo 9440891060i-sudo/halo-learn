@@ -1,0 +1,274 @@
+const express = require('express');
+const router = express.Router();
+
+const Coupon = require('../models/Coupon');
+const CouponUsage = require('../models/CouponUsage');
+const User = require('../models/User');
+const Plan = require('../models/Plan');
+const Order = require('../models/Order');
+
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+
+/* =========================
+   ENV VARIABLES
+========================= */
+const SMTP_HOST = process.env.SMTP_HOST; // email-smtp.ap-south-1.amazonaws.com
+const SMTP_PORT = Number(process.env.SMTP_PORT) || 587;
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const FROM_EMAIL = process.env.FROM_EMAIL || 'support@tricher.app';
+
+const RZP_KEY = process.env.RZP_KEY;
+const RZP_SECRET = process.env.RZP_SECRET;
+
+/* =========================
+   STARTUP LOG (IMPORTANT)
+========================= */
+console.log('📧 SMTP CONFIG CHECK:', {
+  SMTP_HOST,
+  SMTP_PORT,
+  SMTP_USER_SET: !!SMTP_USER,
+  SMTP_PASS_SET: !!SMTP_PASS,
+  FROM_EMAIL,
+});
+
+/* =========================
+   RAZORPAY INIT
+========================= */
+const razorpay = new Razorpay({
+  key_id: RZP_KEY,
+  key_secret: RZP_SECRET,
+});
+
+/* =========================
+   MAIL TRANSPORTER (REUSABLE)
+========================= */
+const mailTransporter =
+  SMTP_HOST && SMTP_USER && SMTP_PASS
+    ? nodemailer.createTransport({
+        host: SMTP_HOST,
+        port: SMTP_PORT,
+        secure: SMTP_PORT === 465,
+        auth: {
+          user: SMTP_USER,
+          pass: SMTP_PASS,
+        },
+      })
+    : null;
+
+/* =========================
+   PRICE + COUPON CALC
+========================= */
+async function calculateFinalAmount(originalPrice, couponCode) {
+  if (!couponCode) {
+    return { original: originalPrice, discount: 0, final: originalPrice };
+  }
+
+  const coupon = await Coupon.findOne({
+    code: couponCode.toUpperCase(),
+    active: true,
+  });
+
+  if (!coupon) return { valid: false };
+
+  if (coupon.expires_at && coupon.expires_at < new Date()) return { valid: false };
+  if (coupon.max_uses && coupon.used_count >= coupon.max_uses) return { valid: false };
+
+  let discount = 0;
+  if (coupon.discount_type === 'flat') {
+    discount = coupon.discount_value;
+  } else {
+    discount = Math.floor((originalPrice * coupon.discount_value) / 100);
+  }
+
+  const final = Math.max(0, originalPrice - discount);
+  return { original: originalPrice, discount, final, valid: true };
+}
+
+/* =========================
+   APPLY COUPON
+========================= */
+router.post('/apply-coupon', async (req, res) => {
+  try {
+    const { coupon, originalPrice } = req.body;
+    const result = await calculateFinalAmount(originalPrice, coupon);
+
+    if (!result.valid) {
+      return res.status(400).json({ error: 'Invalid or expired coupon' });
+    }
+
+    res.json(result);
+  } catch (err) {
+    console.error('❌ APPLY COUPON ERROR:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* =========================
+   CREATE ORDER
+========================= */
+router.post('/create-order', async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      mobile,
+      address,
+      city,
+      pincode,
+      coupon,
+      productId,
+      originalPrice,
+      paymentMethod,
+    } = req.body;
+
+    const calc = await calculateFinalAmount(originalPrice, coupon);
+    if (coupon && !calc.valid) {
+      return res.status(400).json({ error: 'Invalid coupon' });
+    }
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({ name, email, mobile, address, city, pincode });
+    } else {
+      Object.assign(user, { name, mobile, address, city, pincode });
+      await user.save();
+    }
+
+    let plan = await Plan.findOne({ name: productId || 'tricher' });
+
+    const rzpOrder = await razorpay.orders.create({
+      amount: calc.final * 100,
+      currency: 'INR',
+      receipt: `rcpt_${Date.now()}`,
+    });
+
+    const order = await Order.create({
+      user: user._id,
+      plan: plan?._id,
+      paymentMethod: paymentMethod || 'online',
+      amount: originalPrice,
+      finalAmount: calc.final,
+      address,
+      status: 'created',
+      razorpayOrderId: rzpOrder.id,
+      couponCode: coupon?.toUpperCase(),
+    });
+
+    res.json({
+      razorpayOrder: rzpOrder,
+      orderId: order._id,
+      key: RZP_KEY,
+      finalAmount: calc.final,
+    });
+  } catch (err) {
+    console.error('❌ CREATE ORDER ERROR:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* =========================
+   VERIFY PAYMENT + EMAIL
+========================= */
+router.post('/verify-payment', async (req, res) => {
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      orderId,
+    } = req.body;
+
+    const hmac = crypto.createHmac('sha256', RZP_SECRET);
+    hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+    const generatedSignature = hmac.digest('hex');
+
+    if (generatedSignature !== razorpay_signature) {
+      return res.status(400).json({ error: 'Invalid signature' });
+    }
+
+    const order = await Order.findOne({
+      _id: orderId,
+      razorpayOrderId: razorpay_order_id,
+    });
+
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+
+    order.status = 'active';
+    order.razorpayPaymentId = razorpay_payment_id;
+    order.razorpaySignature = razorpay_signature;
+    await order.save();
+
+    console.log('📦 ORDER VERIFIED:', order._id);
+
+    if (order.couponCode) {
+      await CouponUsage.create({ coupon_code: order.couponCode, user_id: order.user });
+      await Coupon.findOneAndUpdate(
+        { code: order.couponCode },
+        { $inc: { used_count: 1 } }
+      );
+    }
+
+    try {
+      const user = await User.findById(order.user);
+
+      if (!user?.email) {
+        console.warn('⚠️ No user email, skipping mail');
+      } else if (!mailTransporter) {
+        console.warn('⚠️ SMTP not ready, skipping mail');
+      } else {
+        console.log('📤 Sending onboarding email to:', user.email);
+
+        const info = await mailTransporter.sendMail({
+          from: FROM_EMAIL,
+          to: user.email,
+          subject: 'Welcome to Tricher – Order Confirmed',
+          html: `
+            <h2>Welcome to Tricher 👋</h2>
+            <p>Hi ${user.name || ''},</p>
+            <p>Your order <strong>${order._id}</strong> has been successfully confirmed.</p>
+            <p>Thank you for choosing Tricher.</p>
+          `,
+        });
+
+        console.log('✅ EMAIL SENT:', info.messageId);
+      }
+    } catch (mailErr) {
+      console.error('❌ EMAIL ERROR:', mailErr);
+    }
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('❌ VERIFY PAYMENT ERROR:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* =========================
+   TEST EMAIL ENDPOINT
+========================= */
+router.get('/test-email', async (req, res) => {
+  try {
+    if (!mailTransporter) {
+      return res.status(500).json({ error: 'SMTP not configured' });
+    }
+
+    const info = await mailTransporter.sendMail({
+      from: FROM_EMAIL,
+      to: 'psaisuryacharan@gmail.com', // CHANGE THIS
+      subject: '✅ Tricher SES Test',
+      text: 'If you received this, AWS SES + Nodemailer is working.',
+    });
+
+    console.log('✅ TEST EMAIL SENT:', info.messageId);
+
+    res.json({ success: true, messageId: info.messageId });
+  } catch (err) {
+    console.error('❌ TEST EMAIL FAILED:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;
