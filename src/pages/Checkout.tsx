@@ -13,6 +13,7 @@ const Checkout = () => {
   const [paymentMode, setPaymentMode] = useState<"cod" | "online" | null>(null);
   const [discountCode, setDiscountCode] = useState("");
   const [discountApplied, setDiscountApplied] = useState(false);
+  const [discountDetails, setDiscountDetails] = useState<{ original: number; discount: number; final: number } | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,32 +24,38 @@ const Checkout = () => {
   });
 
   const basePrice = 3999;
-  const discountAmount = discountApplied ? 500 : 0;
-  const finalPrice = basePrice - discountAmount;
+  const discountAmount = discountDetails ? discountDetails.discount : 0;
+  const finalPrice = discountDetails ? discountDetails.final : basePrice;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleApplyDiscount = () => {
-    if (discountCode.toUpperCase() === "TRICHER500") {
+  const handleApplyDiscount = async () => {
+    if (!discountCode) return;
+    try {
+      const API = (import.meta.env.VITE_API_URL as string) || 'http://localhost:5000';
+      const res = await fetch(`${API}/api/apply-coupon`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ coupon: discountCode, productId: 'tricher', originalPrice: basePrice }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Invalid coupon');
+      }
+      const body = await res.json();
+      setDiscountDetails({ original: body.original, discount: body.discount, final: body.final });
       setDiscountApplied(true);
-      toast({
-        title: "Discount Applied!",
-        description: "₹500 off on your order",
-      });
-    } else {
-      toast({
-        title: "Invalid Code",
-        description: "Please enter a valid discount code",
-        variant: "destructive",
-      });
+      toast({ title: 'Discount Applied', description: `₹${body.discount} off` });
+    } catch (err: any) {
+      toast({ title: 'Coupon error', description: err.message || String(err), variant: 'destructive' });
     }
   };
 
-  const handlePlaceOrder = (e: React.FormEvent) => {
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!paymentMode) {
       toast({
         title: "Select payment method",
@@ -58,12 +65,109 @@ const Checkout = () => {
       return;
     }
 
-    toast({
-      title: "Order Placed!",
-      description: paymentMode === "cod" 
-        ? "Your order has been placed. Pay on delivery." 
-        : "Redirecting to payment gateway...",
-    });
+    try {
+      const API = (import.meta.env.VITE_API_URL as string) || 'http://localhost:5000';
+
+      if (paymentMode === 'cod') {
+        // For COD, create order via existing endpoint
+        const userRes = await fetch(`${API}/api/users`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        });
+        if (!userRes.ok) throw new Error('Failed to create user');
+        const user = await userRes.json();
+
+        const plansRes = await fetch(`${API}/api/plans`);
+        const plans = plansRes.ok ? await plansRes.json() : [];
+        const tricherPlan = plans.find((p: any) => p.name === 'tricher') || plans[0];
+
+        const orderRes = await fetch(`${API}/api/orders`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user._id,
+            planId: tricherPlan._id,
+            paymentMethod: 'cod',
+            address: formData.address,
+            amount: finalPrice,
+          }),
+        });
+        if (!orderRes.ok) throw new Error('Failed to create COD order');
+        toast({ title: 'Order Placed', description: 'Pay on delivery' });
+        navigate('/');
+        return;
+      }
+
+      // ONLINE PAYMENT flow
+      // Create order on backend which creates Razorpay order
+      const createRes = await fetch(`${API}/api/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          coupon: discountApplied ? discountCode : undefined,
+          productId: 'tricher',
+          originalPrice: basePrice,
+          paymentMethod: 'online',
+        }),
+      });
+      if (!createRes.ok) {
+        const err = await createRes.json().catch(() => ({}));
+        throw new Error(err.error || 'Failed to create payment order');
+      }
+
+      const { razorpayOrder, orderId, key, finalAmount } = await createRes.json();
+
+      // load razorpay script
+      await new Promise((resolve, reject) => {
+        if ((window as any).Razorpay) return resolve(true);
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.onload = () => resolve(true);
+        script.onerror = () => reject(new Error('Razorpay SDK failed to load'));
+        document.body.appendChild(script);
+      });
+
+      const options = {
+        key: key || (import.meta.env.VITE_RZP_KEY as string),
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        order_id: razorpayOrder.id,
+        name: 'Tricher',
+        description: 'Tricher Glasses',
+        handler: async function (response: any) {
+          // verify on backend
+          const verifyRes = await fetch(`${API}/api/verify-payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId,
+            }),
+          });
+          if (!verifyRes.ok) {
+            const err = await verifyRes.json().catch(() => ({}));
+            toast({ title: 'Payment verification failed', description: err.error || 'Verification failed', variant: 'destructive' });
+            return;
+          }
+          toast({ title: 'Payment successful', description: 'Order confirmed' });
+          navigate('/');
+        },
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.mobile,
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    } catch (err: any) {
+      toast({ title: 'Order failed', description: err.message || String(err), variant: 'destructive' });
+    }
   };
 
   return (
