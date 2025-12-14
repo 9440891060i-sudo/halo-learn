@@ -8,13 +8,16 @@ const HeroSection = () => {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border/40">
         <div className="container flex items-center justify-between h-14">
-            <motion.div
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="text-base font-normal tracking-tight"
+            className="flex items-center gap-4"
           >
-            Tricher tools
+            <span className="text-base font-normal tracking-tight">Tricher AI</span>
+            <span className="hidden sm:block text-xs uppercase tracking-[0.2em] text-muted-foreground/60 font-light">
+              World's First Offline AI
+            </span>
           </motion.div>
           <motion.div
             initial={{ opacity: 0 }}
@@ -31,15 +34,6 @@ const HeroSection = () => {
       <div className="container pt-28 pb-0 flex flex-col items-center min-h-screen">
         {/* Centered Content */}
         <div className="text-center space-y-3 max-w-4xl">
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-xs uppercase tracking-[0.3em] text-muted-foreground/70 font-light"
-          >
-            World's First Offline AI to Stay on Call
-          </motion.p>
-
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
