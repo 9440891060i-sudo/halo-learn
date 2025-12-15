@@ -131,9 +131,21 @@ router.post('/create-order', async (req, res) => {
 
     let user = await User.findOne({ email });
     if (!user) {
-      user = await User.create({ name, email, mobile, address, city, pincode });
+      // create user only with provided fields (name may be empty for digital-only purchases)
+      const userData = { email };
+      if (name) userData.name = name;
+      if (mobile) userData.mobile = mobile;
+      if (address) userData.address = address;
+      if (city) userData.city = city;
+      if (pincode) userData.pincode = pincode;
+      user = await User.create(userData);
     } else {
-      Object.assign(user, { name, mobile, address, city, pincode });
+      // update only fields that are provided (do not overwrite with empty strings)
+      if (name) user.name = name;
+      if (mobile) user.mobile = mobile;
+      if (address) user.address = address;
+      if (city) user.city = city;
+      if (pincode) user.pincode = pincode;
       await user.save();
     }
 
@@ -272,3 +284,102 @@ router.get('/test-email', async (req, res) => {
 });
 
 module.exports = router;
+
+/* =========================
+   OTP SERVICE
+   - POST /send-otp { email }
+   - POST /verify-otp { email, otp }
+   Note: simple in-memory store with expiry for demo purposes.
+========================= */
+
+const otpStore = new Map(); // email -> { code, expiresAt }
+
+function generateOtp() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+router.post('/send-otp', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email required' });
+
+    const code = generateOtp();
+
+    // Store with 5 minute expiry
+    const expiresAt = Date.now() + 5 * 60 * 1000;
+    otpStore.set(email, { code, expiresAt });
+
+    // schedule removal
+    setTimeout(() => {
+      const entry = otpStore.get(email);
+      if (entry && entry.expiresAt <= Date.now()) otpStore.delete(email);
+    }, 5 * 60 * 1000 + 1000);
+
+    // send mail if transporter available
+    if (!mailTransporter) {
+      console.warn('SMTP not configured, OTP will not be emailed. OTP:', code);
+    } else {
+      try {
+        await mailTransporter.sendMail({
+          from: FROM_EMAIL,
+          to: email,
+          subject: 'Your Tricher OTP',
+          text: `Your OTP is ${code}. It will expire in 5 minutes.`,
+        });
+      } catch (mailErr) {
+        console.error('OTP EMAIL ERROR:', mailErr);
+      }
+    }
+
+    // Determine user status
+    const user = await User.findOne({ email });
+    let userType = 'new';
+    if (user) {
+      // find latest order for user
+      const latestOrder = await Order.findOne({ user: user._id }).sort({ createdAt: -1 });
+      if (latestOrder) {
+        if (latestOrder.status === 'active') userType = 'active';
+        else userType = 'expired';
+      } else {
+        userType = 'new';
+      }
+    }
+
+    res.json({ ok: true, userType });
+  } catch (err) {
+    console.error('SEND OTP ERROR:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/verify-otp', async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) return res.status(400).json({ error: 'Email and OTP required' });
+
+    const entry = otpStore.get(email);
+    if (!entry) return res.status(400).json({ error: 'OTP expired or not sent' });
+    if (entry.code !== otp) return res.status(400).json({ error: 'Invalid OTP' });
+
+    // OTP valid; remove it
+    otpStore.delete(email);
+
+    // Determine user status as above
+    const user = await User.findOne({ email });
+    let userType = 'new';
+    if (user) {
+      const latestOrder = await Order.findOne({ user: user._id }).sort({ createdAt: -1 });
+      if (latestOrder) {
+        if (latestOrder.status === 'active') userType = 'active';
+        else userType = 'expired';
+      } else {
+        userType = 'new';
+      }
+    }
+
+    res.json({ ok: true, userType });
+  } catch (err) {
+    console.error('VERIFY OTP ERROR:', err);
+    res.status(500).json({ error: err.message });
+  }
+});

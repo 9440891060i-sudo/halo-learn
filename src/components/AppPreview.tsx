@@ -19,7 +19,7 @@ const AppPreview = () => {
           </p>
           <h2 className="text-3xl md:text-4xl font-extralight tracking-tight">
             Upload on phone.
-            <span className="block text-muted-foreground">Learn through glasses.</span>
+            <span className="block text-muted-foreground">Speak through glasses.</span>
           </h2>
 
           <div className="mt-6">

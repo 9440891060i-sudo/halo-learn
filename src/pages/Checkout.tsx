@@ -4,26 +4,35 @@ import { ArrowLeft, CreditCard, Banknote, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const location = useLocation();
+  const preset = (location.state || {}) as {
+    presetPlan?: string;
+    amount?: number;
+    productId?: string;
+    email?: string;
+  };
   const [paymentMode, setPaymentMode] = useState<"cod" | "online" | null>(null);
   const [discountCode, setDiscountCode] = useState("");
   const [discountApplied, setDiscountApplied] = useState(false);
   const [discountDetails, setDiscountDetails] = useState<{ original: number; discount: number; final: number } | null>(null);
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
+    email: preset.email || "",
     mobile: "",
     address: "",
     city: "",
     pincode: "",
   });
 
-  const basePrice = 3999;
+  const basePrice = preset.amount ?? 3999;
+  const presetProductId = preset.productId || 'tricher';
+  const isDigital = presetProductId === 'basic' || presetProductId === 'pro';
   const discountAmount = discountDetails ? discountDetails.discount : 0;
   const finalPrice = discountDetails ? discountDetails.final : basePrice;
 
@@ -38,7 +47,7 @@ const Checkout = () => {
       const res = await fetch(`${API}/api/apply-coupon`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ coupon: discountCode, productId: 'tricher', originalPrice: basePrice }),
+        body: JSON.stringify({ coupon: discountCode, productId: presetProductId, originalPrice: basePrice }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -56,7 +65,9 @@ const Checkout = () => {
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!paymentMode) {
+    // For digital plans, default to online payment
+    const chosenPaymentMode = isDigital ? 'online' : paymentMode;
+    if (!chosenPaymentMode) {
       toast({
         title: "Select payment method",
         description: "Please choose Cash on Delivery or Pay Online",
@@ -68,7 +79,7 @@ const Checkout = () => {
     try {
       const API = (import.meta.env.VITE_API_URL as string) || 'http://localhost:5000';
 
-      if (paymentMode === 'cod') {
+      if (chosenPaymentMode === 'cod') {
         // For COD, create order via existing endpoint
         const userRes = await fetch(`${API}/api/users`, {
           method: 'POST',
@@ -80,14 +91,14 @@ const Checkout = () => {
 
         const plansRes = await fetch(`${API}/api/plans`);
         const plans = plansRes.ok ? await plansRes.json() : [];
-        const tricherPlan = plans.find((p: any) => p.name === 'tricher') || plans[0];
+        const chosenPlan = plans.find((p: any) => p.name === presetProductId) || plans[0];
 
         const orderRes = await fetch(`${API}/api/orders`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             userId: user._id,
-            planId: tricherPlan._id,
+            planId: chosenPlan._id,
             paymentMethod: 'cod',
             address: formData.address,
             amount: finalPrice,
@@ -107,7 +118,7 @@ const Checkout = () => {
         body: JSON.stringify({
           ...formData,
           coupon: discountApplied ? discountCode : undefined,
-          productId: 'tricher',
+          productId: presetProductId,
           originalPrice: basePrice,
           paymentMethod: 'online',
         }),
@@ -182,7 +193,7 @@ const Checkout = () => {
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-light">Back</span>
           </button>
-          <span className="mx-auto text-sm font-light tracking-widest">CHECKOUT</span>
+          {/* <span className="mx-auto text-sm font-light tracking-widest">CHECKOUT</span> */}
           <div className="w-16" />
         </div>
       </header>
@@ -199,8 +210,12 @@ const Checkout = () => {
               <h2 className="text-sm text-muted-foreground mb-4 tracking-wide">ORDER SUMMARY</h2>
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="text-lg font-light">Tricher Glasses</p>
-                  <p className="text-sm text-muted-foreground">+ 3 months AI subscription</p>
+                  <p className="text-lg font-light">{isDigital ? 'Tricher AI Subscription' : 'Tricher Glasses'}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {presetProductId === 'basic' && '3 months AI access'}
+                    {presetProductId === 'pro' && '12 months AI access'}
+                    {presetProductId === 'tricher' && '+ 3 months AI subscription'}
+                  </p>
                 </div>
                 <p className="text-2xl font-light">₹{basePrice.toLocaleString()}</p>
               </div>
@@ -242,19 +257,20 @@ const Checkout = () => {
             <form onSubmit={handlePlaceOrder} className="space-y-6">
               <div className="space-y-4">
                 <h2 className="text-sm text-muted-foreground tracking-wide">CONTACT</h2>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-sm font-light">Full Name</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                    className="bg-transparent border-border rounded-lg h-12"
-                    placeholder="John Doe"
-                  />
-                </div>
+                {!isDigital && (
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm font-light">Full Name</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      required
+                      className="bg-transparent border-border rounded-lg h-12"
+                      placeholder="John Doe"
+                    />
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-light">Email</Label>
@@ -285,82 +301,85 @@ const Checkout = () => {
                 </div>
               </div>
 
-              <div className="space-y-4 pt-6">
-                <h2 className="text-sm text-muted-foreground tracking-wide">SHIPPING ADDRESS</h2>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="address" className="text-sm font-light">Address</Label>
-                  <Input
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    required
-                    className="bg-transparent border-border rounded-lg h-12"
-                    placeholder="House/Flat No., Street, Landmark"
-                  />
-                </div>
+              {!isDigital && (
+                <div className="space-y-4 pt-6">
+                  <h2 className="text-sm text-muted-foreground tracking-wide">SHIPPING ADDRESS</h2>
 
-                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="city" className="text-sm font-light">City</Label>
+                    <Label htmlFor="address" className="text-sm font-light">Address</Label>
                     <Input
-                      id="city"
-                      name="city"
-                      value={formData.city}
+                      id="address"
+                      name="address"
+                      value={formData.address}
                       onChange={handleInputChange}
                       required
                       className="bg-transparent border-border rounded-lg h-12"
-                      placeholder="Mumbai"
+                      placeholder="House/Flat No., Street, Landmark"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="pincode" className="text-sm font-light">Pincode</Label>
-                    <Input
-                      id="pincode"
-                      name="pincode"
-                      value={formData.pincode}
-                      onChange={handleInputChange}
-                      required
-                      className="bg-transparent border-border rounded-lg h-12"
-                      placeholder="400001"
-                    />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="city" className="text-sm font-light">City</Label>
+                      <Input
+                        id="city"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleInputChange}
+                        required
+                        className="bg-transparent border-border rounded-lg h-12"
+                        placeholder="Mumbai"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="pincode" className="text-sm font-light">Pincode</Label>
+                      <Input
+                        id="pincode"
+                        name="pincode"
+                        value={formData.pincode}
+                        onChange={handleInputChange}
+                        required
+                        className="bg-transparent border-border rounded-lg h-12"
+                        placeholder="400001"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
-              {/* Payment Mode */}
-              <div className="space-y-4 pt-6">
-                <h2 className="text-sm text-muted-foreground tracking-wide">PAYMENT METHOD</h2>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMode("cod")}
-                    className={`p-6 rounded-xl border transition-all duration-200 flex flex-col items-center gap-3 ${
-                      paymentMode === "cod"
-                        ? "border-foreground bg-foreground/5"
-                        : "border-border hover:border-muted-foreground"
-                    }`}
-                  >
-                    <Banknote className="w-6 h-6" />
-                    <span className="text-sm font-light">Cash on Delivery</span>
-                  </button>
+              {/* Payment Mode (hidden for digital plans; digital uses online by default) */}
+              {!isDigital && (
+                <div className="space-y-4 pt-6">
+                  <h2 className="text-sm text-muted-foreground tracking-wide">PAYMENT METHOD</h2>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMode("cod")}
+                      className={`p-6 rounded-xl border transition-all duration-200 flex flex-col items-center gap-3 ${
+                        paymentMode === "cod"
+                          ? "border-foreground bg-foreground/5"
+                          : "border-border hover:border-muted-foreground"
+                      }`}
+                    >
+                      <Banknote className="w-6 h-6" />
+                      <span className="text-sm font-light">Cash on Delivery</span>
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMode("online")}
-                    className={`p-6 rounded-xl border transition-all duration-200 flex flex-col items-center gap-3 ${
-                      paymentMode === "online"
-                        ? "border-foreground bg-foreground/5"
-                        : "border-border hover:border-muted-foreground"
-                    }`}
-                  >
-                    <CreditCard className="w-6 h-6" />
-                    <span className="text-sm font-light">Pay Online</span>
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMode("online")}
+                      className={`p-6 rounded-xl border transition-all duration-200 flex flex-col items-center gap-3 ${
+                        paymentMode === "online"
+                          ? "border-foreground bg-foreground/5"
+                          : "border-border hover:border-muted-foreground"
+                      }`}
+                    >
+                      <CreditCard className="w-6 h-6" />
+                      <span className="text-sm font-light">Pay Online</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Total & Place Order */}
               <div className="pt-8">
@@ -374,11 +393,11 @@ const Checkout = () => {
                   size="xl"
                   className="w-full"
                 >
-                  Place Order
+                  {isDigital ? 'Pay Now' : 'Place Order'}
                 </Button>
-                <p className="text-center text-xs text-muted-foreground mt-4">
-                  Free shipping across India
-                </p>
+                {!isDigital && (
+                  <p className="text-center text-xs text-muted-foreground mt-4">Free shipping across India</p>
+                )}
               </div>
             </form>
           </motion.div>

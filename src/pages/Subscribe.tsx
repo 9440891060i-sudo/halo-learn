@@ -19,8 +19,9 @@ const Subscribe = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [userType, setUserType] = useState<UserType>(null);
   const [selectedPlan, setSelectedPlan] = useState<"quarterly" | "yearly" | null>(null);
+  const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
-  const handleCheck = (e: React.FormEvent) => {
+  const handleCheck = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !email.includes("@")) {
@@ -32,32 +33,51 @@ const Subscribe = () => {
       return;
     }
 
-    const otpString = otp.join("");
+    const otpString = otp.join('');
     if (otpString.length !== 6) {
-      toast({
-        title: "Enter OTP",
-        description: "Please enter the 6-digit OTP",
-        variant: "destructive",
-      });
+      toast({ title: 'Enter OTP', description: 'Please enter the 6-digit OTP', variant: 'destructive' });
       return;
     }
 
-    // Demo mapping: 111111 => active, 222222 => expired, 333333 => new
-    if (otpString === "111111") {
-      setUserType("active");
-      setStep("result");
-    } else if (otpString === "222222") {
-      setUserType("expired");
-      setStep("result");
-    } else if (otpString === "333333") {
-      setUserType("new");
-      setStep("result");
-    } else {
-      toast({
-        title: "Invalid OTP",
-        description: "The OTP you entered is not recognized in this demo",
-        variant: "destructive",
+    try {
+      const resp = await fetch(`${API_BASE}/api/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp: otpString }),
       });
+
+      let data = null;
+      try {
+        data = await resp.json();
+      } catch (parseErr) {
+        data = null;
+      }
+
+      if (!resp.ok) {
+        let msg = resp.statusText || 'OTP verification failed';
+        if (data && data.error) msg = data.error;
+        else if (data && Object.keys(data).length) msg = JSON.stringify(data);
+        else if (data === null) {
+          try {
+            msg = await resp.text();
+          } catch (_) {}
+        }
+        throw new Error(msg || 'OTP verification failed');
+      }
+
+      if (data?.userType === 'active') {
+        setUserType('active');
+        setStep('result');
+      } else if (data?.userType === 'expired') {
+        setUserType('expired');
+        setStep('result');
+      } else {
+        setUserType('new');
+        setStep('result');
+      }
+    } catch (err) {
+      console.error(err);
+      toast({ title: 'Error', description: String(err), variant: 'destructive' });
     }
   };
 
@@ -83,9 +103,14 @@ const Subscribe = () => {
 
   const handleSubscribe = (plan: "quarterly" | "yearly") => {
     setSelectedPlan(plan);
+    // map plan to amount and product id
+    const amount = plan === 'quarterly' ? 1799 : 4999;
+    const productId = plan === 'quarterly' ? 'basic' : 'pro';
+    // navigate to checkout with preset plan and amount
+    navigate('/checkout', { state: { presetPlan: plan, amount, productId, email } });
     toast({
-      title: "Subscription Started!",
-      description: `You've subscribed to the ${plan} plan`,
+      title: "Proceed to Checkout",
+      description: `Redirecting to checkout for ${plan} plan`,
     });
   };
 
@@ -109,7 +134,7 @@ const Subscribe = () => {
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-light">Back</span>
           </button>
-          <span className="mx-auto text-sm font-light tracking-widest">SUBSCRIBE</span>
+          {/* <span className="mx-auto text-sm font-light tracking-widest">SUBSCRIBE</span> */}
           <div className="w-16" />
         </div>
       </header>
@@ -122,8 +147,8 @@ const Subscribe = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h1 className="text-3xl font-extralight mb-3">AI Subscription</h1>
-            <p className="text-muted-foreground font-light">Manage your subscription</p>
+            <h1 className="text-3xl font-extralight mb-3">Tricher AI</h1>
+            {/* <p className="text-muted-foreground font-light">Manage your subscription</p> */}
           </motion.div>
 
           {/* Input Step */}
@@ -151,7 +176,7 @@ const Subscribe = () => {
                   <div className="pt-2">
                     <button
                       type="button"
-                      onClick={() => {
+                      onClick={async () => {
                         if (!email || !email.includes("@")) {
                           toast({
                             title: "Enter valid email",
@@ -160,10 +185,42 @@ const Subscribe = () => {
                           });
                           return;
                         }
-                        setOtp(Array(6).fill(""));
-                        setOtpSent(true);
-                        toast({ title: "OTP sent", description: `OTP sent to ${email}` });
-                        setTimeout(() => otpRefs.current[0]?.focus(), 50);
+
+                        try {
+                          const resp = await fetch(`${API_BASE}/api/send-otp`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email }),
+                          });
+
+                          let data = null;
+                          try {
+                            data = await resp.json();
+                          } catch (parseErr) {
+                            data = null;
+                          }
+
+                          if (!resp.ok) {
+                            let msg = resp.statusText || 'Failed to send OTP';
+                            if (data && data.error) msg = data.error;
+                            else if (data && Object.keys(data).length) msg = JSON.stringify(data);
+                            else if (data === null) {
+                              try { msg = await resp.text(); } catch (_) {}
+                            }
+                            throw new Error(msg || 'Failed to send OTP');
+                          }
+
+                          // mark otp sent
+                          setOtp(Array(6).fill(''));
+                          setOtpSent(true);
+                          toast({ title: 'OTP sent', description: `OTP sent to ${email}` });
+                          setTimeout(() => otpRefs.current[0]?.focus(), 50);
+
+                          // Do not auto-advance here — require the user to enter OTP and verify it.
+                        } catch (err) {
+                          console.error(err);
+                          toast({ title: 'Error', description: String(err), variant: 'destructive' });
+                        }
                       }}
                       className="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-background/5 text-sm"
                     >
@@ -310,7 +367,7 @@ const Subscribe = () => {
                 <div className="w-20 h-20 mx-auto rounded-full bg-foreground/5 flex items-center justify-center mb-6">
                   <Sparkles className="w-10 h-10 text-foreground" strokeWidth={1} />
                 </div>
-                <h2 className="text-2xl font-extralight mb-3">Choose Your Plan</h2>
+                {/* <h2 className="text-2xl font-extralight mb-3">Choose Your Plan</h2> */}
                 <p className="text-muted-foreground font-light">
                   Select a subscription to get started
                 </p>
@@ -371,7 +428,7 @@ const Subscribe = () => {
               <button
                 onClick={() => {
                   setStep("input");
-                  setInputValue("");
+                  setEmail("");
                   setUserType(null);
                 }}
                 className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"

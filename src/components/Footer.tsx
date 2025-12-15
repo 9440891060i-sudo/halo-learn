@@ -28,7 +28,7 @@ const Footer = () => {
           </div>
 
           <div className="pt-10 text-xs text-muted-foreground/60 font-light">
-            © {new Date().getFullYear()} Smart Study Glasses. All rights reserved.
+            © {new Date().getFullYear()} Tricher AI. All rights reserved.
           </div>
         </motion.div>
       </div>
