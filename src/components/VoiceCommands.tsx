@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 
 const commands = [
-  "Explain this page.",
+  "repeat that.",
   "Next question.",
-  "Repeat the last answer.",
+  "What is malaria?",
   "Give me short notes.",
   "Pause.",
 ];

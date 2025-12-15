@@ -7,7 +7,7 @@ const PricingSection = () => {
   const navigate = useNavigate();
   
   return (
-    <section className="py-32 lg:py-40 section-alt">
+    <section id="pricing" className="py-32 lg:py-40 section-alt">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -37,7 +37,7 @@ const PricingSection = () => {
               Best Value
             </div>
             <h3 className="text-lg font-light mb-8">Tricher Glasses</h3>
-            <div className="text-5xl font-extralight mb-3 tracking-tight">₹4,499</div>
+            <div className="text-5xl font-extralight mb-3 tracking-tight">₹4499</div>
             <p className="text-background/50 text-sm font-light mb-10">One-time purchase</p>
             <ul className="space-y-4 mb-12 text-background/70 font-light">
               <li className="flex items-start gap-3">
@@ -76,7 +76,7 @@ const PricingSection = () => {
             className="p-10 lg:p-12 rounded-2xl bg-background border border-border/50"
           >
             <h3 className="text-lg font-light mb-8">AI Subscription</h3>
-            <div className="text-5xl font-extralight tracking-tight">₹1,999</div>
+            <div className="text-5xl font-extralight tracking-tight">₹1799</div>
             <p className="text-muted-foreground text-sm font-light mb-10 mt-3">/quarterly</p>
             <ul className="space-y-4 mb-12 text-muted-foreground font-light">
               <li className="flex items-start gap-3">
@@ -102,7 +102,7 @@ const PricingSection = () => {
               className="w-full"
               onClick={() => navigate("/subscribe")}
             >
-              Subscribe
+              Renew
             </Button>
           </motion.div>
         </div>

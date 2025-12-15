@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-
+import React from "react";
 type UserType = "active" | "expired" | "new" | null;
 type Step = "input" | "result";
 
@@ -14,37 +14,70 @@ const Subscribe = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [step, setStep] = useState<Step>("input");
-  const [inputValue, setInputValue] = useState("");
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
+  const [otpSent, setOtpSent] = useState(false);
   const [userType, setUserType] = useState<UserType>(null);
   const [selectedPlan, setSelectedPlan] = useState<"quarterly" | "yearly" | null>(null);
 
   const handleCheck = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!inputValue) {
+
+    if (!email || !email.includes("@")) {
       toast({
-        title: "Input required",
-        description: "Please enter 1, 2, or 3",
+        title: "Valid email required",
+        description: "Please enter the linked email",
         variant: "destructive",
       });
       return;
     }
 
-    if (inputValue === "1") {
+    const otpString = otp.join("");
+    if (otpString.length !== 6) {
+      toast({
+        title: "Enter OTP",
+        description: "Please enter the 6-digit OTP",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Demo mapping: 111111 => active, 222222 => expired, 333333 => new
+    if (otpString === "111111") {
       setUserType("active");
       setStep("result");
-    } else if (inputValue === "2") {
+    } else if (otpString === "222222") {
       setUserType("expired");
       setStep("result");
-    } else if (inputValue === "3") {
+    } else if (otpString === "333333") {
       setUserType("new");
       setStep("result");
     } else {
       toast({
-        title: "Invalid input",
-        description: "Enter 1 for active, 2 for expired, 3 for new user",
+        title: "Invalid OTP",
+        description: "The OTP you entered is not recognized in this demo",
         variant: "destructive",
       });
+    }
+  };
+
+  // OTP helpers
+  const otpRefs: React.MutableRefObject<HTMLInputElement[]> = React.useRef([]);
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (!/^[0-9]?$/.test(value)) return;
+    const next = [...otp];
+    next[index] = value;
+    setOtp(next);
+    if (value && index < 5) {
+      otpRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (e: React.KeyboardEvent, index: number) => {
+    const key = e.key;
+    if (key === "Backspace" && !otp[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus();
     }
   };
 
@@ -57,11 +90,11 @@ const Subscribe = () => {
   };
 
   const handleResume = () => {
-    toast({
-      title: "Subscription Resumed!",
-      description: "Your subscription is now active again",
-    });
-    setUserType("active");
+    
+    // Redirect user to the plans view so they can choose a subscription
+    setUserType("new");
+    setSelectedPlan(null);
+    setStep("result");
   };
 
   return (
@@ -102,26 +135,73 @@ const Subscribe = () => {
             >
               <form onSubmit={handleCheck} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="userInput" className="text-sm font-light">Enter User ID</Label>
+                  <Label htmlFor="emailInput" className="text-sm font-light">Enter linked email</Label>
                   <Input
-                    id="userInput"
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    placeholder="1, 2, or 3"
+                    id="emailInput"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@domain.com"
                     className="bg-transparent border-border rounded-lg h-12"
                   />
                 </div>
 
-                <p className="text-xs text-muted-foreground text-center">
-                  Demo: 1 = Active, 2 = Expired, 3 = New User
-                </p>
+                {/* Get OTP button shown before OTP is sent */}
+                {!otpSent && (
+                  <div className="pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!email || !email.includes("@")) {
+                          toast({
+                            title: "Enter valid email",
+                            description: "Please enter the linked email before requesting OTP",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        setOtp(Array(6).fill(""));
+                        setOtpSent(true);
+                        toast({ title: "OTP sent", description: `OTP sent to ${email}` });
+                        setTimeout(() => otpRefs.current[0]?.focus(), 50);
+                      }}
+                      className="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-background/5 text-sm"
+                    >
+                      Get OTP
+                    </button>
+                  </div>
+                )}
+
+                {/* OTP inputs shown after OTP is sent */}
+                {otpSent && (
+                  <div>
+                    <Label className="text-sm font-light">Enter OTP</Label>
+                    <div className="mt-2  flex items-center gap-2">
+                      {otp.map((digit, i) => (
+                        <input
+                          key={i}
+                          ref={(el) => (otpRefs.current[i] = el as HTMLInputElement)}
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          maxLength={1}
+                          value={digit}
+                          onChange={(e) => handleOtpChange(i, e.target.value.replace(/[^0-9]/g, ""))}
+                          onKeyDown={(e) => handleOtpKeyDown(e, i)}
+                         className="w-12 h-12 bg-transparent border-[0.5px] border-black/30 rounded-lg text-center text-lg"
+
+
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <Button
                   type="submit"
                   variant="hero"
                   size="xl"
                   className="w-full"
+                  disabled={!otpSent || !email || otp.join("").length !== 6}
                 >
                   Check Status
                 </Button>
@@ -165,18 +245,7 @@ const Subscribe = () => {
                 </div>
               </div>
 
-              <Button
-                onClick={() => {
-                  setStep("input");
-                  setInputValue("");
-                  setUserType(null);
-                }}
-                variant="heroOutline"
-                size="lg"
-                className="w-full"
-              >
-                Check Another Account
-              </Button>
+              
             </motion.div>
           )}
 
@@ -222,19 +291,10 @@ const Subscribe = () => {
                 size="xl"
                 className="w-full"
               >
-                Resume Subscription — ₹1,999
+                Resume Subscription
               </Button>
 
-              <button
-                onClick={() => {
-                  setStep("input");
-                  setInputValue("");
-                  setUserType(null);
-                }}
-                className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Check another account
-              </button>
+            
             </motion.div>
           )}
 
@@ -265,7 +325,7 @@ const Subscribe = () => {
                       <p className="text-muted-foreground text-sm font-light">3 months access</p>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-extralight">₹1,999</div>
+                      <div className="text-2xl font-extralight">₹1799</div>
                       <p className="text-muted-foreground text-xs">/quarter</p>
                     </div>
                   </div>
@@ -290,12 +350,12 @@ const Subscribe = () => {
                       <p className="text-background/60 text-sm font-light">12 months access</p>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-extralight">₹4,999</div>
+                      <div className="text-2xl font-extralight">₹4999</div>
                       <p className="text-background/60 text-xs">/year</p>
                     </div>
                   </div>
                   <p className="text-background/60 text-sm font-light mb-4">
-                    Save ₹2,997 compared to quarterly
+                    Save ₹2197 compared to quarterly
                   </p>
                   <Button
                     onClick={() => handleSubscribe("yearly")}

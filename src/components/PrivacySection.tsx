@@ -18,7 +18,7 @@ const PrivacySection = () => {
           </div>
 
           <h2 className="text-4xl sm:text-5xl lg:text-6xl mb-8">
-            No cloud. No tracking.
+            No Jamming. No tracking.
             <br />
             <span className="text-background/40">100% offline answers.</span>
           </h2>

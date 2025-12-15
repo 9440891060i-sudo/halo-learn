@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
   return (
     <footer className="py-20 bg-background border-t border-border/50">
       <div className="container">
@@ -11,21 +13,18 @@ const Footer = () => {
           transition={{ duration: 0.8 }}
           className="text-center space-y-8"
         >
-          <div className="text-xl font-light tracking-tight">Smart Study Glasses</div>
+          <div className="text-xl font-light tracking-tight">Tricher AI</div>
           <p className="text-muted-foreground font-light text-sm">
-            Hands-Free AI Learning
+            Hands-Free Offline AI Learning
           </p>
 
           <div className="flex justify-center gap-10 text-sm text-muted-foreground font-light">
-            <a href="#shipping" className="hover:text-foreground transition-colors duration-200">
+            <button onClick={() => navigate('/shipping')} className="hover:text-foreground transition-colors duration-200">
               Shipping
-            </a>
-            <a href="#privacy" className="hover:text-foreground transition-colors duration-200">
-              Privacy
-            </a>
-            <a href="#support" className="hover:text-foreground transition-colors duration-200">
+            </button>
+            <button onClick={() => navigate('/support')} className="hover:text-foreground transition-colors duration-200">
               Support
-            </a>
+            </button>
           </div>
 
           <div className="pt-10 text-xs text-muted-foreground/60 font-light">
