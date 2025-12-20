@@ -30,7 +30,7 @@ const Checkout = () => {
     pincode: "",
   });
 
-  const basePrice = preset.amount ?? 3999;
+  const basePrice = preset.amount ?? 4499;
   const presetProductId = preset.productId || 'tricher';
   const isDigital = presetProductId === 'basic' || presetProductId === 'pro';
   const discountAmount = discountDetails ? discountDetails.discount : 0;
@@ -221,7 +221,7 @@ const Checkout = () => {
               </div>
               {discountApplied && (
                 <div className="flex justify-between items-center mt-3 text-green-600">
-                  <p className="text-sm">Discount (TRICHER500)</p>
+                  <p className="text-sm">Coupon Availed </p>
                   <p className="text-sm">-₹{discountAmount}</p>
                 </div>
               )}
@@ -354,16 +354,21 @@ const Checkout = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       type="button"
-                      onClick={() => setPaymentMode("cod")}
-                      className={`p-6 rounded-xl border transition-all duration-200 flex flex-col items-center gap-3 ${
-                        paymentMode === "cod"
-                          ? "border-foreground bg-foreground/5"
-                          : "border-border hover:border-muted-foreground"
-                      }`}
+                      disabled
+                      className="p-6 rounded-xl border border-border bg-muted/40
+                                flex flex-col items-center gap-3
+                                cursor-not-allowed opacity-60 relative"
                     >
                       <Banknote className="w-6 h-6" />
                       <span className="text-sm font-light">Cash on Delivery</span>
+
+                      {/* Coming Soon badge */}
+                      <span className="absolute top-3 right-3 text-[10px] px-2 py-0.5 rounded-full
+                                      bg-background border border-border text-muted-foreground">
+                        Coming soon
+                      </span>
                     </button>
+
 
                     <button
                       type="button"

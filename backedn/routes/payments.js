@@ -77,10 +77,18 @@ async function calculateFinalAmount(originalPrice, couponCode) {
   if (coupon.max_uses && coupon.used_count >= coupon.max_uses) return { valid: false };
 
   let discount = 0;
-  if (coupon.discount_type === 'flat') {
-    discount = coupon.discount_value;
+  // Normalize and validate discount type/value
+  const discType = (coupon.discount_type || '').toString().toLowerCase();
+  if (discType === 'flat') {
+    discount = Number(coupon.discount_value) || 0;
+  } else if (discType === 'percent' || discType === 'percentage') {
+    let pct = Number(coupon.discount_value) || 0;
+    if (pct < 0) pct = 0;
+    if (pct > 100) pct = 100;
+    discount = Math.floor((originalPrice * pct) / 100);
   } else {
-    discount = Math.floor((originalPrice * coupon.discount_value) / 100);
+    // Fallback: treat unknown type as flat amount
+    discount = Number(coupon.discount_value) || 0;
   }
 
   const final = Math.max(0, originalPrice - discount);
