@@ -130,11 +130,12 @@ const AppPreview = () => {
               </button>
             </div>
 
-            <div className="text-muted-foreground font-extralight">
-              All AI processing happens on your phone.
-              <br />
-              No internet needed while studying.
-            </div>
+            <div className="text-muted-foreground font-extralight text-center lg:text-left max-w-sm mx-auto lg:mx-0">
+  All AI processing happens on your phone.
+  <br />
+  No internet needed while studying.
+</div>
+
           </div>
         </div>
       </section>
