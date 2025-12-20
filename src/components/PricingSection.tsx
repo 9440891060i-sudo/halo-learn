@@ -75,7 +75,7 @@ const PricingSection = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="p-10 lg:p-12 rounded-2xl bg-background border border-border/50"
           >
-            <h3 className="text-lg font-light mb-8">AI Subscription</h3>
+            <h3 className="text-lg font-light mb-8">Tricher AI</h3>
             <div className="text-5xl font-extralight tracking-tight">₹1799</div>
             <p className="text-muted-foreground text-sm font-light mb-10 mt-3">/quarterly</p>
             <ul className="space-y-4 mb-12 text-muted-foreground font-light">
