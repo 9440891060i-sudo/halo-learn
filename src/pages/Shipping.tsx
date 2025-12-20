@@ -23,7 +23,7 @@ const Shipping = () => {
         <div className="max-w-md mx-auto">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-center space-y-6">
             <h1 className="text-2xl font-extralight">Shipping Update</h1>
-            <p className="text-muted-foreground">Your order has been forwarded to our delivery partners. Check your mail or contact support for tracking id.</p>
+            <p className="text-muted-foreground"> Check your mail or contact support for tracking id.</p>
 
             <div className="pt-4">
               <Button size="lg" onClick={() => handlecontactSupport()}>
