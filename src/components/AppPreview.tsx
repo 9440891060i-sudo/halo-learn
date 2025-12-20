@@ -73,7 +73,9 @@ const AppPreview = () => {
               <div className="text-4xl font-mono tracking-widest mb-6">
                 {timeLeft}
               </div>
-
+              <p className="text-sm text-muted-foreground mb-8">
+                Tricher AI is launching very soon.
+              </p>
               <button
                 onClick={() => setShowTimer(false)}
                 className="text-sm text-muted-foreground hover:text-foreground transition"
