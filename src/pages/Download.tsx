@@ -73,12 +73,12 @@ const Download = () => {
                 background: "#eef2f7",
                 color: "#6b7280",
                 border: "none",
-                fontSize: 14,
+                fontSize: 10,
                 cursor: "not-allowed",
               }}
             >
               <FaApple size={18} />
-              App Store
+              {/* App Store */}
             </button>
           </div>
 
