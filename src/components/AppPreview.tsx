@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Bluetooth, Wifi, Battery, Signal, ChevronRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import mockup from "@/assets/mockup.png";
+import mockup from "@/assets/mockup1.png";
 import { toast } from "sonner";
 
 const AppPreview = () => {
