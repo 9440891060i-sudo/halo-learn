@@ -1,4 +1,4 @@
-import { FaApple, FaGooglePlay } from "react-icons/fa";
+import { FaApple, FaGooglePlay, FaLink } from "react-icons/fa";
 
 const Download = () => {
   return (
@@ -57,6 +57,7 @@ const Download = () => {
             border: "1px solid #f1f5f9",
             padding: 18,
             borderRadius: 12,
+            marginBottom: 20,
           }}
         >
           <strong>iOS</strong>
@@ -73,17 +74,66 @@ const Download = () => {
                 background: "#eef2f7",
                 color: "#6b7280",
                 border: "none",
-                fontSize: 10,
+                fontSize: 12,
                 cursor: "not-allowed",
               }}
             >
               <FaApple size={18} />
-              {/* App Store */}
             </button>
           </div>
 
           <div style={{ marginTop: 10, fontSize: 13, color: "#6b7280" }}>
             Coming soon on App Store
+          </div>
+        </section>
+
+        {/* EARLY ACCESS */}
+        <section
+          style={{
+            border: "1px solid #e5e7eb",
+            padding: 20,
+            borderRadius: 14,
+            background: "#fafafa",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 14,
+              fontWeight: 600,
+              marginBottom: 8,
+            }}
+          >
+            Early Access
+          </div>
+
+ <div
+  style={{
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    padding: "6px 12px",
+    borderRadius: 999,
+    background: "#111827",
+    color: "#fff",
+    fontSize: 12,
+    marginBottom: 10,
+    cursor: "default",
+    userSelect: "none",
+  }}
+>
+  <FaLink size={12} />
+  tricherai.apk
+</div>
+
+
+
+          <div
+            style={{
+              fontSize: 13,
+              color: "#374151",
+            }}
+          >
+            Available first for android users.
           </div>
         </section>
       </div>

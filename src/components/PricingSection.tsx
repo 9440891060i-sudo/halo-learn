@@ -81,7 +81,7 @@ const PricingSection = () => {
             <ul className="space-y-4 mb-12 text-muted-foreground font-light">
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-foreground flex-shrink-0" strokeWidth={1.5} />
-                <span>Voice answers from your notes</span>
+                <span>Custom voice commands</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-foreground flex-shrink-0" strokeWidth={1.5} />
@@ -91,10 +91,7 @@ const PricingSection = () => {
                 <Check className="w-4 h-4 mt-1 text-foreground flex-shrink-0" strokeWidth={1.5} />
                 <span>Upload unlimited PDFs</span>
               </li>
-              <li className="flex items-start gap-3">
-                <Check className="w-4 h-4 mt-1 text-foreground flex-shrink-0" strokeWidth={1.5} />
-                <span>Works with zero Internet connection</span>
-              </li>
+              
             </ul>
             <Button
               variant="heroOutline"
