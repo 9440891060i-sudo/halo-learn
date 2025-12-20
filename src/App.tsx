@@ -9,6 +9,7 @@ import Subscribe from "./pages/Subscribe";
 import Shipping from "./pages/Shipping";
 import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
+import Download from "./pages/Download";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/download" element={<Download />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/subscribe" element={<Subscribe />} />
           <Route path="/shipping" element={<Shipping />} />

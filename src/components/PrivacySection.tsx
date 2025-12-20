@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { Lock, Smartphone, ShieldOff } from "lucide-react";
-
+import { Lock, ShieldOff } from "lucide-react";
+import { GiSunglasses } from "react-icons/gi";
 const PrivacySection = () => {
   return (
     <section className="py-32 lg:py-40 bg-foreground text-background">
@@ -20,7 +20,7 @@ const PrivacySection = () => {
           <h2 className="text-4xl sm:text-5xl lg:text-6xl mb-8">
             No Jamming. No tracking.
             <br />
-            <span className="text-background/40">100% offline answers.</span>
+            <span className="text-background/40">100% offline voice answers.</span>
           </h2>
 
           <div className="flex justify-center gap-8 lg:gap-12 mt-14 mb-10 flex-wrap">
@@ -44,9 +44,9 @@ const PrivacySection = () => {
               className="flex flex-col items-center gap-3"
             >
               <div className="w-16 h-16 rounded-full bg-background/10 flex items-center justify-center">
-                <Smartphone className="w-6 h-6" strokeWidth={1.5} />
+                <GiSunglasses className="w-9 h-9" /> 
               </div>
-              <span className="text-sm text-background/60 font-light">On Device</span>
+              <span className="text-sm text-background/60 font-light">On Call</span>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 10 }}

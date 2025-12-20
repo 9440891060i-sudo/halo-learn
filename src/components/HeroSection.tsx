@@ -1,9 +1,21 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import cheetahGlasses from "@/assets/cheetah-glasses.jpeg";
+import cheetahGlasses from "@/assets/cheetah-glasses.png";
 import { toast } from "sonner";
 
 const HeroSection = () => {
+  const openDownloadRoute = () => {
+    const url = `/download`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   return (
     <section className="relative md:min-h-screen hero-gradient overflow-hidden">
       {/* Navigation */}
@@ -23,18 +35,9 @@ const HeroSection = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <Button
-  variant="hero"
-  size="sm"
-  className="h-8 px-4 text-sm"
-  onClick={() =>
-    toast("Releasing shortly", {
-      description: "Stay tuned. Something exciting is coming 👀",
-    })
-  }
->
-  Download App
-</Button>
+            <Button variant="hero" size="sm" className="h-8 px-4 text-sm" onClick={openDownloadRoute}>
+              Download App
+            </Button>
 
           </motion.div>
         </div>
@@ -49,9 +52,9 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <h1 className="text-[clamp(2.5rem,6vw,6rem)] leading-[1.02] tracking-tight">
-              Stay on Call
+              World’s first offline
               <br />
-              <span className="text-muted-foreground">with AI.</span>
+              <span className="text-muted-foreground"> voice ai</span>
             </h1>
           </motion.div>
 
@@ -61,7 +64,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-xl sm:text-2xl text-muted-foreground font-extralight"
           >
-            100% offline. No internet needed. Ever.
+            100% offline. Voice controlled.
           </motion.p>
         </div>
 

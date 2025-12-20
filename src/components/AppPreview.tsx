@@ -5,6 +5,17 @@ import mockup from "@/assets/mockup.png";
 import { toast } from "sonner";
 
 const AppPreview = () => {
+  const openDownloadRoute = () => {
+    const url = `/download`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
   return (
     <section className="py-32 px-6 bg-background overflow-hidden">
       <div className="max-w-6xl mx-auto">
@@ -46,14 +57,10 @@ const AppPreview = () => {
 
               <button
                 type="button"
-                onClick={() =>
-                  toast("Releasing shortly", {
-                    description: "Stay tuned. Something exciting is coming 👀",
-                  })
-                }
+                onClick={() => openDownloadRoute()}
                 className="mt-4 text-sm text-muted-foreground group flex flex-col items-center"
               >
-                <span>Download APK</span>
+                <span>Download APP</span>
                 <span className="mt-2 w-full max-w-[60px] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left border-b border-foreground/40" />
               </button>
 
@@ -89,7 +96,7 @@ const AppPreview = () => {
                 <div>
                   <h3 className="text-lg font-light mb-1">Talk to your virtual friend</h3>
                   <p className="text-muted-foreground font-extralight text-sm">
-                    Helps you in exams even in jammed networks or no internet.
+                    Helps you to study anywhere, even in signal jammed environment.
                   </p>
                 </div>
               </div>

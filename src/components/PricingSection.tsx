@@ -46,7 +46,7 @@ const PricingSection = () => {
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-background flex-shrink-0" strokeWidth={1.5} />
-                <span>3 months AI subscription free</span>
+                <span>Comes with 3 months Tricher ai</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-background flex-shrink-0" strokeWidth={1.5} />
@@ -93,7 +93,7 @@ const PricingSection = () => {
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-foreground flex-shrink-0" strokeWidth={1.5} />
-                <span>For existing glass owners</span>
+                <span>Works with zero Internet connection</span>
               </li>
             </ul>
             <Button
