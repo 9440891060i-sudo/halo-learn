@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 const AppPreview = () => {
   const openDownloadRoute = () => {
-    const url = `/download`;
+    const url = `${window.location.origin}/#/download`;
     const a = document.createElement('a');
     a.href = url;
     a.target = '_blank';
@@ -16,6 +16,13 @@ const AppPreview = () => {
     a.click();
     document.body.removeChild(a);
   };
+  const openVideo = () => {
+  window.open(
+    "https://youtu.be/7MDeKxuZfQg?si=SgqA1K5ydh6Wyl24",
+    "_blank",
+    "noopener,noreferrer"
+  );
+};
   return (
     <section className="py-32 px-6 bg-background overflow-hidden">
       <div className="max-w-6xl mx-auto">
@@ -35,11 +42,16 @@ const AppPreview = () => {
           </h2>
 
           <div className="mt-6">
-            <Button variant="heroOutline" size="sm" className="inline-flex items-center gap-2 transform translate-y-3">
-              <Play className="w-4 h-4" />
-              Watch Product Video
-            </Button>
-          </div>
+  <Button
+    variant="heroOutline"
+    size="sm"
+    onClick={openVideo}
+    className="inline-flex items-center gap-2 transform translate-y-3"
+  >
+    <Play className="w-4 h-4" />
+    Watch Product Video
+  </Button>
+</div>
         </motion.div>
         
 

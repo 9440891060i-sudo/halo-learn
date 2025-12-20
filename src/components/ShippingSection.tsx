@@ -19,7 +19,7 @@ const ShippingSection = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl sm:text-4xl mb-3">
-            All-India Shipping
+            Shipping
           </h2>
           <p className="text-muted-foreground font-light">
             Safe. Tested. Student-Friendly.
@@ -57,7 +57,9 @@ const ShippingSection = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-center text-muted-foreground mt-14 font-light"
         >
-          Order anywhere in India.
+          Glasses currently don’t ship outside India.
+
+      Tricher ai is available to be used globally
         </motion.p>
       </div>
     </section>

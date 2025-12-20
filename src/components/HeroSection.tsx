@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 const HeroSection = () => {
   const openDownloadRoute = () => {
-    const url = `/download`;
+    const url = `${window.location.origin}/#/download`;
     const a = document.createElement('a');
     a.href = url;
     a.target = '_blank';

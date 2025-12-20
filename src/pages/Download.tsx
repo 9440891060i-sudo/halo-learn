@@ -1,35 +1,89 @@
-import { Apple } from "lucide-react";
+import { FaApple, FaGooglePlay } from "react-icons/fa";
 
 const Download = () => {
   return (
-    <div style={{ background: "#fff", minHeight: "100vh", color: "#0f1724", fontFamily: "Inter,system-ui,Segoe UI,Roboto,-apple-system,Helvetica,Arial" }}>
+    <div
+      style={{
+        background: "#fff",
+        minHeight: "100vh",
+        color: "#0f1724",
+        fontFamily:
+          "Inter,system-ui,Segoe UI,Roboto,-apple-system,Helvetica,Arial",
+      }}
+    >
       <div style={{ maxWidth: 760, margin: "72px auto", padding: 28 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-          <h1 style={{ fontSize: 22, margin: 0 }}>Download Tricher AI</h1>
-        </div>
+        <h1 style={{ fontSize: 22, marginBottom: 16 }}>Download Tricher AI</h1>
 
-        {/* <p style={{ color: "#6b7280", marginTop: 0, marginBottom: 20 }}>A clean page with quick download links and store notes.</p> */}
-
-        <section style={{ border: "1px solid #f1f5f9", padding: 18, borderRadius: 12, marginBottom: 14 }}>
+        {/* Android */}
+        <section
+          style={{
+            border: "1px solid #f1f5f9",
+            padding: 18,
+            borderRadius: 12,
+            marginBottom: 14,
+          }}
+        >
           <strong>Android</strong>
+
           <div style={{ marginTop: 12 }}>
-            <button disabled style={{ padding: "10px 14px", borderRadius: 10, background: "#eef2f7", color: "#6b7280", border: "none" }}>
-              Download APK 
+            <button
+              disabled
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "10px 16px",
+                borderRadius: 10,
+                background: "#eef2f7",
+                color: "#6b7280",
+                border: "none",
+                fontSize: 14,
+                cursor: "not-allowed",
+              }}
+            >
+              <FaGooglePlay size={16} />
+              Download APK
             </button>
           </div>
-          <div style={{ display: "flex", gap: 8, alignItems: "center", color: "#6b7280", marginTop: 10 }}>
-            <span style={{ fontSize: 13 }}>Coming soon on Play Store</span>
+
+          <div style={{ marginTop: 10, fontSize: 13, color: "#6b7280" }}>
+            Available soon on Google Play
           </div>
         </section>
 
-        <section style={{ border: "1px solid #f1f5f9", padding: 18, borderRadius: 12 }}>
+        {/* iOS */}
+        <section
+          style={{
+            border: "1px solid #f1f5f9",
+            padding: 18,
+            borderRadius: 12,
+          }}
+        >
           <strong>iOS</strong>
+
           <div style={{ marginTop: 12 }}>
-            <div style={{ color: "#6b7280" }}>Coming soon on App Store</div>
+            <button
+              disabled
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "10px 16px",
+                borderRadius: 10,
+                background: "#eef2f7",
+                color: "#6b7280",
+                border: "none",
+                fontSize: 14,
+                cursor: "not-allowed",
+              }}
+            >
+              <FaApple size={18} />
+              App Store
+            </button>
           </div>
-          <div style={{ display: "flex", gap: 8, alignItems: "center", color: "#6b7280", marginTop: 10 }}>
-            <Apple size={18} />
-            {/* <span style={{ fontSize: 13 }}>App Store listing coming soon</span> */}
+
+          <div style={{ marginTop: 10, fontSize: 13, color: "#6b7280" }}>
+            Coming soon on App Store
           </div>
         </section>
       </div>
