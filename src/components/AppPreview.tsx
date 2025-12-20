@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Bluetooth, Wifi, Battery, Signal, ChevronRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import mockup from "@/assets/mockup.png";
+import { toast } from "sonner";
 
 const AppPreview = () => {
   return (
@@ -45,11 +46,17 @@ const AppPreview = () => {
 
               <button
                 type="button"
+                onClick={() =>
+                  toast("Releasing shortly", {
+                    description: "Stay tuned. Something exciting is coming 👀",
+                  })
+                }
                 className="mt-4 text-sm text-muted-foreground group flex flex-col items-center"
               >
                 <span>Download APK</span>
-                <span className="mt-2 w-full max-w-[60px] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+                <span className="mt-2 w-full max-w-[60px] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left border-b border-foreground/40" />
               </button>
+
             </div>
             
           </motion.div>

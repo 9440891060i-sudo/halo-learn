@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import cheetahGlasses from "@/assets/cheetah-glasses.jpeg";
+import { toast } from "sonner";
 
 const HeroSection = () => {
   return (
@@ -22,9 +23,19 @@ const HeroSection = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <Button variant="hero" size="sm" className="h-8 px-4 text-sm">
-              Download App
-              </Button>
+            <Button
+  variant="hero"
+  size="sm"
+  className="h-8 px-4 text-sm"
+  onClick={() =>
+    toast("Releasing shortly", {
+      description: "Stay tuned. Something exciting is coming 👀",
+    })
+  }
+>
+  Download App
+</Button>
+
           </motion.div>
         </div>
       </nav>
