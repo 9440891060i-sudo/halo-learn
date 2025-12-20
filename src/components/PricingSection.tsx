@@ -76,8 +76,21 @@ const PricingSection = () => {
             className="p-10 lg:p-12 rounded-2xl bg-background border border-border/50"
           >
             <h3 className="text-lg font-light mb-8">Tricher AI</h3>
-            <div className="text-5xl font-extralight tracking-tight">₹1799</div>
-            <p className="text-muted-foreground text-sm font-light mb-10 mt-3">/quarterly</p>
+    <div className="text-left flex items-baseline gap-2">
+  <h2 className="text-2xl font-light tracking-tight">
+    Free Talk Time
+  </h2>
+  <p className="text-sm text-muted-foreground relative">
+    2 min/day
+  </p>
+</div>
+
+
+
+      <div className="text-2l font-extralight tracking-tight mb-10">
+        ₹1799 <span className="text-lg text-muted-foreground font-light">/ quarterly</span>
+      </div>
+
             <ul className="space-y-4 mb-12 text-muted-foreground font-light">
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-foreground flex-shrink-0" strokeWidth={1.5} />
@@ -90,6 +103,10 @@ const PricingSection = () => {
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-foreground flex-shrink-0" strokeWidth={1.5} />
                 <span>Upload unlimited PDFs</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-4 h-4 mt-1 text-foreground flex-shrink-0" strokeWidth={1.5} />
+                <span>Unlimited talk time</span>
               </li>
               
             </ul>

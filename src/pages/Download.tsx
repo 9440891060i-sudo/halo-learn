@@ -42,7 +42,7 @@ const Download = () => {
               }}
             >
               <FaGooglePlay size={16} />
-              Download APK
+              {/* Download APK */}
             </button>
           </div>
 
