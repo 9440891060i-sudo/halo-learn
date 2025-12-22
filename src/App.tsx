@@ -12,6 +12,8 @@ import Support from "./pages/Support";
 import Download from "./pages/Download";
 import NotFound from "./pages/NotFound";
 
+import useAnalytics from "./useAnalytics";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -21,6 +23,9 @@ const App = () => (
       <Sonner />
 
       <HashRouter>
+        {/* 👇 analytics MUST be here */}
+        <AnalyticsWrapper />
+
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/download" element={<Download />} />
@@ -31,9 +36,14 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </HashRouter>
-
     </TooltipProvider>
   </QueryClientProvider>
 );
 
 export default App;
+
+/* small helper component */
+const AnalyticsWrapper = () => {
+  useAnalytics();
+  return null;
+};
