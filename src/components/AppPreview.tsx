@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import mockup from "@/assets/mockup1.png";
 import { useEffect, useState } from "react";
 
-const DOWNLOAD_LAUNCH_AT = new Date("2025-12-22T20:00:00+05:30");
+const DOWNLOAD_LAUNCH_AT = new Date("2025-12-24T20:00:00+17:30");
 
 const AppPreview = () => {
   const [timeLeft, setTimeLeft] = useState<string | null>(null);

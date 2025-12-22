@@ -4,7 +4,7 @@ import cheetahGlasses from "@/assets/cheetah-glasses.png";
 import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 
-const DOWNLOAD_LAUNCH_AT = new Date("2025-12-22T20:00:00+05:30");
+const DOWNLOAD_LAUNCH_AT = new Date("2025-12-24T20:00:00+17:30");
 
 const HeroSection = () => {
   const [timeLeft, setTimeLeft] = useState<string | null>(null);
