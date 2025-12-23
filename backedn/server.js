@@ -20,6 +20,7 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/plans', require('./routes/plans'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api', require('./routes/payments'));
+app.use('/api/coupons', require('./routes/coupons'));
 
 async function seedPlans() {
   const plans = [

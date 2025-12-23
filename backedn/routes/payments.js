@@ -281,7 +281,13 @@ router.post('/verify-payment', async (req, res) => {
     console.log('📦 ORDER VERIFIED:', order._id);
 
     if (order.couponCode) {
-      await CouponUsage.create({ coupon_code: order.couponCode, user_id: order.user });
+      await CouponUsage.create({
+        coupon_code: order.couponCode,
+        user_id: order.user,
+        order_id: order._id,
+        amount: order.finalAmount
+      });
+
       await Coupon.findOneAndUpdate(
         { code: order.couponCode },
         { $inc: { used_count: 1 } }
