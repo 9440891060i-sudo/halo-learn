@@ -188,6 +188,63 @@ router.post('/create-order', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+/* =========================
+   GET LOGGED-IN USER + PLAN
+   GET /api/me?email=
+========================= */
+router.get('/me', async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) {
+      return res.status(400).json({ error: 'Email required' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // get latest ACTIVE order
+    const order = await Order.findOne({
+      user: user._id,
+      status: 'active',
+    })
+      .populate('plan')
+      .sort({ createdAt: -1 });
+
+    let plan = null;
+
+    if (order && order.plan) {
+      let expiresAt = null;
+
+      if (order.plan.durationDays > 0) {
+        expiresAt = new Date(order.createdAt);
+        expiresAt.setDate(
+          expiresAt.getDate() + order.plan.durationDays
+        );
+      }
+
+      plan = {
+        name: order.plan.name,
+        description: order.plan.description,
+        price: order.plan.price,
+        expiresAt, // null = lifetime
+      };
+    }
+
+    res.json({
+      user: {
+        name: user.name,
+        email: user.email,
+        mobile: user.mobile,
+      },
+      plan,
+    });
+  } catch (err) {
+    console.error('❌ /me ERROR:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 /* =========================
    VERIFY PAYMENT + EMAIL
