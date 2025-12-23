@@ -36,7 +36,7 @@ async function seedPlans() {
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(async () => {
     console.log('Connected to MongoDB');
-    await seedPlans();
+    // await seedPlans();
     app.listen(PORT, () => console.log('Server running on port', PORT));
   })
   .catch(err => {

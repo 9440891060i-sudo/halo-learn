@@ -61,7 +61,15 @@ const PricingSection = () => {
               variant="hero"
               size="lg"
               className="w-full bg-background text-foreground hover:bg-background/90"
-              onClick={() => navigate("/checkout")}
+              onClick={() =>
+  navigate("/checkout", {
+    state: {
+      productId: "tricher",
+      amount: 4499,
+    },
+  })
+}
+
             >
               Buy Now
             </Button>
