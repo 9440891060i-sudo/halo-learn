@@ -88,7 +88,7 @@ const Download = () => {
         </section>
 
         {/* EARLY ACCESS */}
-        <section
+        {/* <section
           style={{
             border: "1px solid #e5e7eb",
             padding: 20,
@@ -135,7 +135,7 @@ const Download = () => {
           >
             Available first for android users.
           </div>
-        </section>
+        </section> */}
       </div>
     </div>
   );

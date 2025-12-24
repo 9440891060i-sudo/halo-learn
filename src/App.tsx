@@ -11,8 +11,9 @@ import Shipping from "./pages/Shipping";
 import Support from "./pages/Support";
 import Download from "./pages/Download";
 import NotFound from "./pages/NotFound";
-
+// import MeanWhile from "./pages/Meanwhile";
 import useAnalytics from "./useAnalytics";
+import MeanWhile from "./pages/MeanWhile";
 
 const queryClient = new QueryClient();
 
@@ -28,7 +29,7 @@ const App = () => (
 
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/download" element={<Download />} />
+          <Route path="/download" element={<MeanWhile />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/subscribe" element={<Subscribe />} />
           <Route path="/shipping" element={<Shipping />} />
