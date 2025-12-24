@@ -74,3 +74,21 @@ router.get('/:code/usage', async (req, res) => {
 });
 
 module.exports = router;
+
+// Delete a coupon by code (also removes recorded usages)
+// Note: this permanently deletes the coupon and its usages. If you prefer soft-delete, change to set `active=false`.
+router.delete('/:code', async (req, res) => {
+  try {
+    const code = String(req.params.code).toUpperCase();
+    const coupon = await Coupon.findOneAndDelete({ code });
+    if (!coupon) return res.status(404).json({ error: 'Coupon not found' });
+
+    // remove associated usages
+    await CouponUsage.deleteMany({ coupon_code: code });
+
+    res.json({ ok: true, message: 'Coupon and usages deleted', code });
+  } catch (err) {
+    console.error('DELETE COUPON ERROR:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
