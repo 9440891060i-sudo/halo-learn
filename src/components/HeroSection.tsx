@@ -147,7 +147,7 @@ const HeroSection = () => {
           </div>
 
           {/* HERO IMAGE CAROUSEL - Clean & Minimal */}
-          <div className="mt-12 w-full max-w-5xl px-4 md:px-0">
+          <div className={`mt-12 w-full px-4 md:px-0 ${currentIndex === 0 ? 'max-w-5xl' : 'max-w-2xl'}`}>
             <div
               className="relative w-full bg-gradient-to-b from-transparent via-muted/5 to-transparent rounded-3xl overflow-hidden group"
               onTouchStart={(e: TouchEvent) => {
@@ -187,7 +187,7 @@ const HeroSection = () => {
                     className={`w-full h-auto object-contain ${
                       currentIndex === 0
                         ? 'max-h-[600px]'
-                        : 'md:max-h-[600px] max-h-[800px]'
+                        : 'md:max-h-[450px] max-h-[800px]'
                     }`}
                   />
                 </motion.div>
