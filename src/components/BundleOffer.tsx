@@ -3,13 +3,31 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react"
 import { MdKeyboardDoubleArrowDown, MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { useCarousel } from "@/contexts/CarouselContext";
 
 const BundleOffer = () => {
   const navigate = useNavigate();
+  const { currentIndex, setCurrentIndex, totalImages } = useCarousel();
   
   return (
     <section className="py-8 lg:py-20 bg-foreground text-background">
       <div className="container">
+        {/* Dot Indicators at Top */}
+        <div className="flex items-center justify-center gap-2 mb-6">
+          {Array.from({ length: totalImages }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentIndex(i)}
+              aria-label={`View image ${i + 1}`}
+              className={`transition-all duration-300 rounded-full ${
+                currentIndex === i
+                  ? 'w-2.5 h-2.5 bg-background'
+                  : 'w-2 h-2 bg-background/40 hover:bg-background/60'
+              }`}
+            />
+          ))}
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

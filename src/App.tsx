@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Routes, Route } from "react-router-dom";
+import { CarouselProvider } from "@/contexts/CarouselContext";
 
 import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
@@ -22,21 +23,22 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <CarouselProvider>
+        <HashRouter>
+          {/* 👇 analytics MUST be here */}
+          <AnalyticsWrapper />
 
-      <HashRouter>
-        {/* 👇 analytics MUST be here */}
-        <AnalyticsWrapper />
-
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/download" element={<MeanWhile />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/subscribe" element={<Subscribe />} />
-          <Route path="/shipping" element={<Shipping />} />
-          <Route path="/support" element={<Support />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </HashRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/download" element={<MeanWhile />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/subscribe" element={<Subscribe />} />
+            <Route path="/shipping" element={<Shipping />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </HashRouter>
+      </CarouselProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

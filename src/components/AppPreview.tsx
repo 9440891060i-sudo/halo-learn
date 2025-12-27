@@ -109,9 +109,7 @@ const AppPreview = () => {
             </p>
             <h2 className="text-3xl md:text-4xl font-extralight tracking-tight">
               Upload on phone.
-              <span className="block text-muted-foreground">
-                Speak through glasses.
-              </span>
+              <span className="block"><span className="rainbow-text font-thin">Magic</span> on glasses.</span>
             </h2>
 
             <div className="mt-6">

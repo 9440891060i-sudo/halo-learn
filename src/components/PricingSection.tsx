@@ -42,7 +42,7 @@ const PricingSection = () => {
             <ul className="space-y-4 mb-12 text-background/70 font-light">
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-background flex-shrink-0" strokeWidth={1.5} />
-                <span>AI-optimized directional speakers</span>
+                <span>AI optimised audio system</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-background flex-shrink-0" strokeWidth={1.5} />
@@ -95,7 +95,7 @@ const PricingSection = () => {
 
 
 
-      <div className="text-2l font-extralight tracking-tight mb-10">
+      <div className="text-2l font-extralight tracking-tight mt-4 mb-10">
         ₹1799 <span className="text-lg text-muted-foreground font-light">/ quarterly</span>
       </div>
 

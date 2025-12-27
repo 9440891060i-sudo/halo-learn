@@ -176,6 +176,24 @@
     backdrop-filter: saturate(180%) blur(20px);
     background: hsl(var(--background) / 0.72);
   }
+
+  /* Animated rainbow gradient text */
+  .rainbow-text {
+    background: linear-gradient(90deg,
+      #ff4d4d 0%, #ff9a4d 15%, #ffd34d 30%, #7fff7f 45%, #4dd0ff 60%, #7a5cff 75%, #ff7bd6 90%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: rainbow-move 6s linear infinite;
+  }
+
+  @keyframes rainbow-move {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 }
 
 /* Smooth scrollbar */
