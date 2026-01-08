@@ -2,10 +2,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import cheetahGlasses from "@/assets/cheetah-glasses.png";
 import { useEffect, useState, type TouchEvent } from "react";
-import one from "@/assets/1.jpg";
-import two from "@/assets/2.jpg";
-import tre from "@/assets/3.jpg";
-import four from "@/assets/4.jpg";
+import one from "@/assets/IMG1.jpg";
+import two from "@/assets/IMG2.jpg";
+import tre from "@/assets/IMG3.jpg";
+import four from "@/assets/IMG4.jpg";
+import five from "@/assets/IMG5.jpg";
 import { useCarousel } from "@/contexts/CarouselContext"; 
 const DOWNLOAD_LAUNCH_AT = new Date("2025-12-24T20:00:00+05:30");
 
@@ -16,7 +17,7 @@ const HeroSection = () => {
   const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
   const { currentIndex, setCurrentIndex } = useCarousel();
 
-  const images = [cheetahGlasses, one, two, tre, four];
+  const images = [one, two, tre, four, five];
 
   useEffect(() => {
     const interval = setInterval(() => {

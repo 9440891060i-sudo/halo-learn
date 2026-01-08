@@ -354,19 +354,21 @@ const Checkout = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       type="button"
-                      disabled
-                      className="p-6 rounded-xl border border-border bg-muted/40
-                                flex flex-col items-center gap-3
-                                cursor-not-allowed opacity-60 relative"
+                      onClick={() => setPaymentMode("cod")}
+                      className={`p-6 rounded-xl border transition-all duration-200 flex flex-col items-center gap-3 ${
+                        paymentMode === "cod"
+                          ? "border-foreground bg-foreground/5"
+                          : "border-border hover:border-muted-foreground"
+                      }`}
                     >
                       <Banknote className="w-6 h-6" />
                       <span className="text-sm font-light">Cash on Delivery</span>
 
-                      {/* Coming Soon badge */}
+                      {/* Coming Soon badge
                       <span className="absolute top-3 right-3 text-[10px] px-2 py-0.5 rounded-full
                                       bg-background border border-border text-muted-foreground">
                         Coming soon
-                      </span>
+                      </span> */}
                     </button>
 
 
