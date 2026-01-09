@@ -9,10 +9,13 @@ export default function useAnalytics() {
   useEffect(() => {
     if (!window.gtag) return;
 
-    const pagePath = location.pathname + location.search + location.hash;
+    const pagePath =
+      location.hash.replace("#", "") || "/";
 
-    window.gtag("config", GA_ID, {
+    window.gtag("event", "page_view", {
       page_path: pagePath,
+      page_location: window.location.href,
+      page_title: document.title
     });
   }, [location]);
 }
