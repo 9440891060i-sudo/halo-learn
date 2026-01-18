@@ -10,24 +10,8 @@ const BundleOffer = () => {
   const { currentIndex, setCurrentIndex, totalImages } = useCarousel();
   
   return (
-    <section className="py-8 lg:py-20 bg-foreground text-background">
+    <section className="py-6 lg:py-12 bg-foreground text-background">
       <div className="container">
-        {/* Dot Indicators at Top */}
-        <div className="flex items-center justify-center gap-2 mb-6">
-          {Array.from({ length: totalImages }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentIndex(i)}
-              aria-label={`View image ${i + 1}`}
-              className={`transition-all duration-300 rounded-full ${
-                currentIndex === i
-                  ? 'w-2.5 h-2.5 bg-background'
-                  : 'w-2 h-2 bg-background/40 hover:bg-background/60'
-              }`}
-            />
-          ))}
-        </div>
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -35,21 +19,13 @@ const BundleOffer = () => {
           transition={{ duration: 0.8 }}
           className="text-center max-w-3xl mx-auto space-y-6"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-background/10 text-xs font-extralight tracking-[0.15em] uppercase text-orange-300">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-background/10 text-xs font-extralight tracking-[0.15em] uppercase text-white">
             Limited Time
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl">
-            Glasses & Tricher AI .
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl">
+            Unlock 6 months of Tricher AI for free today
           </h2>
-
-          <div className="flex flex-col items-center gap-2 py-4">
-            <div className="text-5xl sm:text-6xl lg:text-7xl font-thin tracking-tight">₹4499</div>
-            <div className="flex items-center gap-3">
-              <span className="text-background/40 line-through font-extralight">₹6299</span>
-              <span className="text-xs text-background/60 font-extralight tracking-wide">Save ₹1799</span>
-            </div>
-          </div>
 
 
           <motion.div
@@ -69,7 +45,7 @@ const BundleOffer = () => {
               className="group [&>svg]:w-7 [&>svg]:h-7"
             >
               <MdKeyboardDoubleArrowDown
-                className="text-orange-300 transition-transform duration-200 group-hover:translate-x-1"
+                className="text-white transition-transform duration-200 group-hover:translate-x-1"
               />
             </Button>
 

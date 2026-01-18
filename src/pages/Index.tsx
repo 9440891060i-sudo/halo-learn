@@ -5,6 +5,7 @@ import VoiceCommands from "@/components/VoiceCommands";
 import PricingSection from "@/components/PricingSection";
 import ShippingSection from "@/components/ShippingSection";
 import PrivacySection from "@/components/PrivacySection";
+import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -17,6 +18,7 @@ const Index = () => {
       <PricingSection />
       <ShippingSection />
       <PrivacySection />
+      <FAQSection />
       <Footer />
     </main>
   );

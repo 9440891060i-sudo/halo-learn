@@ -36,7 +36,7 @@ const PricingSection = () => {
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-background text-foreground text-xs tracking-wide">
               Best Value
             </div>
-            <h3 className="text-lg font-light mb-8">Tricher Glasses</h3>
+            <h3 className="text-lg font-light mb-8">Tricher glasses v2</h3>
             <div className="text-5xl font-extralight mb-3 tracking-tight">₹4499</div>
             <p className="text-background/50 text-sm font-light mb-10">One-time purchase</p>
             <ul className="space-y-4 mb-12 text-background/70 font-light">
@@ -46,7 +46,7 @@ const PricingSection = () => {
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-background flex-shrink-0" strokeWidth={1.5} />
-                <span>Comes with 3 months Tricher ai</span>
+                <span>Comes with 6 months Tricher ai</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-background flex-shrink-0" strokeWidth={1.5} />
@@ -84,21 +84,15 @@ const PricingSection = () => {
             className="p-10 lg:p-12 rounded-2xl bg-background border border-border/50"
           >
             <h3 className="text-lg font-light mb-8">Tricher AI</h3>
-    <div className="text-left flex items-baseline gap-2">
-  <h2 className="text-2xl font-light tracking-tight">
-    Free Talk Time
-  </h2>
-  <p className="text-sm text-muted-foreground relative">
-    2 min/day
-  </p>
-</div>
-
-
-
-      <div className="text-2l font-extralight tracking-tight mt-4 mb-10">
-        ₹1799 <span className="text-lg text-muted-foreground font-light">/ quarterly</span>
-      </div>
-
+            <div className="text-left flex items-baseline gap-2 mb-3">
+              <h2 className="text-2xl font-light tracking-tight">
+                Free Talk Time
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                5 min/day
+              </p>
+            </div>
+            <p className="text-muted-foreground text-sm font-light mb-10">₹1799/quarterly</p>
             <ul className="space-y-4 mb-12 text-muted-foreground font-light">
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-foreground flex-shrink-0" strokeWidth={1.5} />
@@ -116,7 +110,6 @@ const PricingSection = () => {
                 <Check className="w-4 h-4 mt-1 text-foreground flex-shrink-0" strokeWidth={1.5} />
                 <span>Unlimited talk time</span>
               </li>
-              
             </ul>
             <Button
               variant="heroOutline"
