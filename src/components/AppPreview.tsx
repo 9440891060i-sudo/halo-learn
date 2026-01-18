@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import mockup from "@/assets/mockup1.png";
+import mockup from "@/assets/mockup2.png";
 import { useEffect, useState } from "react";
 
 const DOWNLOAD_LAUNCH_AT = new Date("2025-12-24T20:00:00+17:30");
@@ -138,7 +138,7 @@ const AppPreview = () => {
               <img
                 src={mockup}
                 alt="App mockup"
-                className="w-[400px] rounded-[3rem]"
+                className="w-[400px]"
               />
 
               <button
