@@ -86,7 +86,15 @@ const Checkout = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData),
         });
-        if (!userRes.ok) throw new Error('Failed to create user');
+        if (!userRes.ok) {
+          const err = await userRes.json().catch(() => ({}));
+          if (err.error && (err.error.toLowerCase().includes('already') || err.error.toLowerCase().includes('exists') || err.error.toLowerCase().includes('registered'))) {
+            toast({ title: 'Email already registered', description: 'Try using a different email address', variant: 'destructive' });
+            return;
+          } else {
+            throw new Error(err.error || 'Failed to create user');
+          }
+        }
         const user = await userRes.json();
 
         const plansRes = await fetch(`${API}/api/plans`);

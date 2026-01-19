@@ -185,7 +185,7 @@ const HeroSection = () => {
                   <img
                     src={images[currentIndex]}
                     alt={`Product view ${currentIndex + 1}`}
-                    className={`w-full h-auto object-contain ${
+                    className={`w-full object-contain ${
                       currentIndex === 0
                         ? 'max-h-[600px]'
                         : 'md:max-h-[450px] max-h-[800px]'
