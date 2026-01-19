@@ -88,7 +88,7 @@ const Checkout = () => {
         });
         if (!userRes.ok) {
           const err = await userRes.json().catch(() => ({}));
-          if (err.error && (err.error.toLowerCase().includes('already') || err.error.toLowerCase().includes('exists') || err.error.toLowerCase().includes('registered'))) {
+          if (err.error && (err.error.toLowerCase().includes('already') || err.error.toLowerCase().includes('exists') || err.error.toLowerCase().includes('registered') || err.error.toLowerCase().includes('duplicate'))) {
             toast({ title: 'Email already registered', description: 'Try using a different email address', variant: 'destructive' });
             return;
           } else {
