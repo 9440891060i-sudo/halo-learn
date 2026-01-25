@@ -59,7 +59,7 @@ const ShippingSection = () => {
         >
           Glasses currently don’t ship outside India.
 
-      Tricher ai is available to be used globally
+      Tricher AI is available to be used globally
         </motion.p>
       </div>
     </section>

@@ -16,7 +16,7 @@ const Footer = () => {
           className="text-center space-y-8"
         >
           {/* Brand */}
-          <div className="text-xl font-light tracking-tight">Tricher AI</div>
+          <div className="text-xl font-light tracking-tight">Tricher</div>
 
           <p className="text-muted-foreground font-light text-sm">
             Hands-Free Offline AI Learning
@@ -73,7 +73,7 @@ const Footer = () => {
 
           {/* Copyright */}
           <div className="pt-10 text-xs text-muted-foreground/60 font-light">
-            © {new Date().getFullYear()} Tricher AI. All rights reserved.
+            © {new Date().getFullYear()} Tricher. All rights reserved.
           </div>
         </motion.div>
       </div>

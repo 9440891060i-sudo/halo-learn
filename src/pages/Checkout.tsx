@@ -210,11 +210,11 @@ const Checkout = () => {
               <h2 className="text-sm text-muted-foreground mb-4 tracking-wide">ORDER SUMMARY</h2>
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="text-lg font-light">{isDigital ? 'Tricher AI Subscription' : 'Tricher Glasses'}</p>
+                  <p className="text-lg font-light">{isDigital ? 'Tricher AI Subscription' : 'Tricher Glasses v2'}</p>
                   <p className="text-sm text-muted-foreground">
                     {presetProductId === 'basic' && '3 months AI access'}
                     {presetProductId === 'pro' && '12 months AI access'}
-                    {presetProductId === 'tricher' && '+ 3 months AI subscription'}
+                    {presetProductId === 'tricher' && '+ 6 months AI subscription'}
                   </p>
                 </div>
                 <p className="text-2xl font-light">₹{basePrice.toLocaleString()}</p>
