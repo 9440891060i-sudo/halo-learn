@@ -32,7 +32,7 @@
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [otpSent, setOtpSent] = useState(false);
     const [userType, setUserType] = useState<UserType>(null);
-    const [selectedPlan, setSelectedPlan] = useState<"quarterly" | "yearly" | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly" | null>(null);
     const [meData, setMeData] = useState<MeResponse | null>(null);
     const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
@@ -47,10 +47,8 @@
     };
 
     const planLabel = (name?: string) => {
-      if (name === "basic") return "Quarterly";
-      if (name === "pro") return "Yearly";
-      if (name === "tricher") return "Tricher Glasses";
-      return name || "-";
+    if (name === "basic") return "Monthly";
+    if (name === "pro") return "Yearly";
     };
 
     const handleCheck = async (e: React.FormEvent) => {
@@ -160,11 +158,11 @@
       }
     };
 
-    const handleSubscribe = (plan: "quarterly" | "yearly") => {
-      setSelectedPlan(plan);
-      // map plan to amount and product id
-      const amount = plan === 'quarterly' ? 1799 : 4999;
-      const productId = plan === 'quarterly' ? 'basic' : 'pro';
+const handleSubscribe = (plan: "monthly" | "yearly") => {
+    setSelectedPlan(plan);
+    // map plan to amount and product id
+    const amount = plan === 'monthly' ? 399 : 4999;
+    const productId = plan === 'monthly' ? 'basic' : 'pro';
       // navigate to checkout with preset plan and amount
       navigate('/checkout', { state: { presetPlan: plan, amount, productId, email } });
       toast({
@@ -218,7 +216,8 @@
               >
                 <form onSubmit={handleCheck} className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="emailInput" className="text-sm font-light">Enter linked email</Label>
+                    <Label htmlFor="emailInput" className="text-sm font-light">Enter Active email</Label>
+                    
                     <Input
                       id="emailInput"
                       type="email"
@@ -265,7 +264,13 @@
                               else if (data === null) {
                                 try { msg = await resp.text(); } catch (_) {}
                               }
-                              throw new Error(msg || 'Failed to send OTP');
+                              
+                              toast({
+                                title: resp.status === 404 ? 'Email Not Registered' : 'Error',
+                                description: msg,
+                                variant: 'destructive',
+                              });
+                              return;
                             }
 
                             // mark otp sent
@@ -320,6 +325,18 @@
                   >
                     Check Status
                   </Button>
+                  <p
+  style={{
+    marginTop: '6px',
+    fontSize: '12px',
+    color: '#6b7280',
+    textAlign: 'center',
+    width: '100%'
+  }}
+>
+  Email should be the same as the one used for purchasing glasses
+</p>
+
                 </form>
               </motion.div>
             )}
@@ -382,9 +399,6 @@
 
                 <div>
                   <h2 className="text-2xl font-extralight mb-3">Subscription Expired</h2>
-                  <p className="text-muted-foreground font-light">
-                    Your subscription has expired. Resume to continue using AI features.
-                  </p>
                 </div>
 
                 <div className="p-6 rounded-xl border border-border bg-foreground/5">
@@ -440,27 +454,27 @@
                 </div>
 
                 <div className="space-y-4">
-                  {/* Quarterly Plan */}
-                  <div className="p-6 rounded-xl border border-border hover:border-foreground/30 transition-colors">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="text-lg font-light">Quarterly</h3>
-                        <p className="text-muted-foreground text-sm font-light">3 months access</p>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-extralight">₹1799</div>
-                        <p className="text-muted-foreground text-xs">/quarter</p>
-                      </div>
+                {/* Monthly Plan */}
+                <div className="p-6 rounded-xl border border-border hover:border-foreground/30 transition-colors">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-lg font-light">Monthly</h3>
+                      <p className="text-muted-foreground text-sm font-light">1 month access</p>
                     </div>
-                    <Button
-                      onClick={() => handleSubscribe("quarterly")}
-                      variant="heroOutline"
-                      size="lg"
-                      className="w-full"
-                    >
-                      Subscribe Quarterly
-                    </Button>
+                    <div className="text-right">
+                      <div className="text-2xl font-extralight">₹399</div>
+                      <p className="text-muted-foreground text-xs">/month</p>
+                    </div>
                   </div>
+                  <Button
+                    onClick={() => handleSubscribe("monthly")}
+                    variant="heroOutline"
+                    size="lg"
+                    className="w-full"
+                  >
+                    Subscribe Monthly
+                  </Button>
+                </div>
 
                   {/* Yearly Plan */}
                   <div className="p-6 rounded-xl border border-foreground bg-foreground text-background relative">
@@ -478,7 +492,7 @@
                       </div>
                     </div>
                     <p className="text-background/60 text-sm font-light mb-4">
-                      Save ₹2197 compared to quarterly
+                    Save ₹1,789 compared to monthly
                     </p>
                     <Button
                       onClick={() => handleSubscribe("yearly")}
@@ -533,7 +547,7 @@
                     <div className="flex justify-between">
                       <span className="text-muted-foreground text-sm">Amount</span>
                       <span className="text-sm font-light">
-                        {selectedPlan === "quarterly" ? "₹1,799" : "₹4,999"}
+                        {selectedPlan === "monthly" ? "₹399" : "₹4,999"}
                       </span>
                     </div>
                     <div className="flex justify-between">

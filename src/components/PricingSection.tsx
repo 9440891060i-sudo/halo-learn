@@ -86,13 +86,12 @@ const PricingSection = () => {
             <h3 className="text-lg font-light mb-8">Tricher AI</h3>
             <div className="text-left flex items-baseline gap-2 mb-3">
               <h2 className="text-2xl font-light tracking-tight">
-                Free Talk Time
+                Access to Glass Owners
               </h2>
-              <p className="text-sm text-muted-foreground">
-                5 min/day
-              </p>
+             
             </div>
-            <p className="text-muted-foreground text-sm font-light mb-10">₹1799/quarterly</p>
+            <p className="text-muted-foreground text-sm font-light mb-10">Free Talk time 5min/day</p>
+            
             <ul className="space-y-4 mb-12 text-muted-foreground font-light">
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-foreground flex-shrink-0" strokeWidth={1.5} />

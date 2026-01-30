@@ -5,7 +5,7 @@ import { useEffect, useState, type TouchEvent } from "react";
 import one from "@/assets/IMG1.jpg";
 import two from "@/assets/IMG2.jpg";
 import tre from "@/assets/IMG3.jpg";
-import four from "@/assets/IMG4.jpg";
+import four from "@/assets/Four.jpeg";
 import five from "@/assets/IMG5.jpg";
 import { useCarousel } from "@/contexts/CarouselContext"; 
 const DOWNLOAD_LAUNCH_AT = new Date("2025-12-24T20:00:00+05:30");

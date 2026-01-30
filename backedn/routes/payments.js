@@ -374,6 +374,12 @@ router.post('/send-otp', async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'Email required' });
 
+    // Check if user exists in database
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: 'Email not registered with Tricher. Please use the email you used to purchase your glasses.' });
+    }
+
     const code = generateOtp();
 
     // Store with 5 minute expiry
@@ -403,17 +409,14 @@ router.post('/send-otp', async (req, res) => {
     }
 
     // Determine user status
-    const user = await User.findOne({ email });
     let userType = 'new';
-    if (user) {
-      // find latest order for user
-      const latestOrder = await Order.findOne({ user: user._id }).sort({ createdAt: -1 });
-      if (latestOrder) {
-        if (latestOrder.status === 'active') userType = 'active';
-        else userType = 'expired';
-      } else {
-        userType = 'new';
-      }
+    // find latest order for user
+    const latestOrder = await Order.findOne({ user: user._id }).sort({ createdAt: -1 });
+    if (latestOrder) {
+      if (latestOrder.status === 'active') userType = 'active';
+      else userType = 'expired';
+    } else {
+      userType = 'new';
     }
 
     res.json({ ok: true, userType });
