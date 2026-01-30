@@ -39,7 +39,7 @@ export default function MeanWhile() {
 								})
 							}
 						>
-							Get Glasses + AI Combo
+							Get Glasses
 						</Button>
 					</div>
 

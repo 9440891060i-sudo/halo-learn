@@ -46,7 +46,7 @@ const PricingSection = () => {
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-background flex-shrink-0" strokeWidth={1.5} />
-                <span>Comes with 6 months Tricher ai</span>
+                <span>Comes with 6 months Tricher AI</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-background flex-shrink-0" strokeWidth={1.5} />
