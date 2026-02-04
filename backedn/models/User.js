@@ -6,6 +6,7 @@ const UserSchema = new mongoose.Schema({
   mobile: { type: String, required: true },
   address: { type: String },
   city: { type: String },
+  state: { type: String },
   pincode: { type: String },
   createdAt: { type: Date, default: Date.now }
 });

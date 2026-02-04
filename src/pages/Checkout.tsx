@@ -80,39 +80,37 @@ const Checkout = () => {
       const API = (import.meta.env.VITE_API_URL as string) || 'http://localhost:5000';
 
       if (chosenPaymentMode === 'cod') {
-        // For COD, create order via existing endpoint
-        const userRes = await fetch(`${API}/api/users`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        });
-        if (!userRes.ok) {
-          const err = await userRes.json().catch(() => ({}));
-          if (err.error && (err.error.toLowerCase().includes('already') || err.error.toLowerCase().includes('exists') || err.error.toLowerCase().includes('registered') || err.error.toLowerCase().includes('duplicate'))) {
-            toast({ title: 'Email already registered', description: 'Try using a different email address', variant: 'destructive' });
-            return;
-          } else {
-            throw new Error(err.error || 'Failed to create user');
-          }
-        }
-        const user = await userRes.json();
-
-        const plansRes = await fetch(`${API}/api/plans`);
-        const plans = plansRes.ok ? await plansRes.json() : [];
-        const chosenPlan = plans.find((p: any) => p.name === presetProductId) || plans[0];
-
-        const orderRes = await fetch(`${API}/api/orders`, {
+        // For COD, use payments endpoints so ShipRocket is triggered
+        const createRes = await fetch(`${API}/api/create-order`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            userId: user._id,
-            planId: chosenPlan._id,
+            ...formData,
+            coupon: discountApplied ? discountCode : undefined,
+            productId: presetProductId,
+            originalPrice: basePrice,
             paymentMethod: 'cod',
-            address: formData.address,
-            amount: finalPrice,
           }),
         });
-        if (!orderRes.ok) throw new Error('Failed to create COD order');
+
+        if (!createRes.ok) {
+          const err = await createRes.json().catch(() => ({}));
+          throw new Error(err.error || 'Failed to create COD order');
+        }
+
+        const { orderId } = await createRes.json();
+
+        const confirmRes = await fetch(`${API}/api/confirm-cod-order`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId }),
+        });
+
+        if (!confirmRes.ok) {
+          const err = await confirmRes.json().catch(() => ({}));
+          throw new Error(err.error || 'Failed to confirm COD order');
+        }
+
         toast({ title: 'Order Placed', description: 'Pay on delivery' });
         navigate('/');
         return;
@@ -265,20 +263,18 @@ const Checkout = () => {
             <form onSubmit={handlePlaceOrder} className="space-y-6">
               <div className="space-y-4">
                 <h2 className="text-sm text-muted-foreground tracking-wide">CONTACT</h2>
-                {!isDigital && (
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-sm font-light">Full Name</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      className="bg-transparent border-border rounded-lg h-12"
-                      placeholder="John Doe"
-                    />
-                  </div>
-                )}
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-sm font-light">Full Name *</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    className="bg-transparent border-border rounded-lg h-12"
+                    placeholder="John Doe"
+                  />
+                </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-light">Email</Label>

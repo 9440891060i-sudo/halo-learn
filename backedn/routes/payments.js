@@ -10,6 +10,7 @@ const Order = require('../models/Order');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const shiprocket = require('../utils/shiprocket');
 
 /* =========================
    ENV VARIABLES
@@ -96,6 +97,62 @@ async function calculateFinalAmount(originalPrice, couponCode) {
 }
 
 /* =========================
+   CHECK SHIPROCKET CONFIGURATION
+========================= */
+router.get('/shiprocket-config', async (req, res) => {
+  try {
+    const config = {
+      configured: !!(process.env.SHIPROCKET_EMAIL && process.env.SHIPROCKET_PASSWORD),
+      emailSet: !!process.env.SHIPROCKET_EMAIL,
+      passwordSet: !!process.env.SHIPROCKET_PASSWORD,
+      pickupLocationId: process.env.SHIPROCKET_PICKUP_LOCATION_ID || 'Not Set',
+      sellerName: process.env.SELLER_NAME || 'Not Set',
+    };
+
+    res.json(config);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* =========================
+   CHECK PINCODE SERVICEABILITY
+========================= */
+router.post('/check-pincode', async (req, res) => {
+  try {
+    const { pincode } = req.body;
+    
+    if (!pincode) {
+      return res.status(400).json({ error: 'Pincode is required' });
+    }
+
+    // Check if Shiprocket is configured
+    if (!process.env.SHIPROCKET_EMAIL || !process.env.SHIPROCKET_PASSWORD) {
+      // Return serviceable by default if Shiprocket not configured
+      return res.json({
+        serviceable: true,
+        cod: true,
+        prepaid: true,
+        message: 'Shiprocket not configured - serviceability check skipped'
+      });
+    }
+
+    const serviceability = await shiprocket.checkPincodeServiceability(pincode);
+    
+    res.json(serviceability);
+  } catch (err) {
+    console.error('❌ PINCODE CHECK ERROR:', err);
+    // Return serviceable on error to not block orders
+    res.json({
+      serviceable: true,
+      cod: true,
+      prepaid: true,
+      error: 'Could not verify pincode, proceeding with order'
+    });
+  }
+});
+
+/* =========================
    APPLY COUPON
 ========================= */
 router.post('/apply-coupon', async (req, res) => {
@@ -129,20 +186,33 @@ router.post('/create-order', async (req, res) => {
       coupon,
       productId,
       originalPrice,
+      amount, // Accept both amount and originalPrice
       paymentMethod,
     } = req.body;
 
-    const calc = await calculateFinalAmount(originalPrice, coupon);
+    // Use amount if originalPrice not provided (backwards compatibility)
+    const orderAmount = originalPrice || amount;
+
+    if (!orderAmount || orderAmount <= 0) {
+      return res.status(400).json({ error: 'Valid amount is required' });
+    }
+
+    const calc = await calculateFinalAmount(orderAmount, coupon);
     if (coupon && !calc.valid) {
       return res.status(400).json({ error: 'Invalid coupon' });
     }
 
+    if (!name || !mobile) {
+      return res.status(400).json({ error: 'Name and mobile are required' });
+    }
+
     let user = await User.findOne({ email });
     if (!user) {
-      // create user only with provided fields (name may be empty for digital-only purchases)
-      const userData = { email };
-      if (name) userData.name = name;
-      if (mobile) userData.mobile = mobile;
+      const userData = { 
+        email, 
+        name: name || 'Customer',
+        mobile: mobile || '9999999999'
+      };
       if (address) userData.address = address;
       if (city) userData.city = city;
       if (pincode) userData.pincode = pincode;
@@ -158,9 +228,17 @@ router.post('/create-order', async (req, res) => {
     }
 
     let plan = await Plan.findOne({ name: productId || 'tricher' });
+    if (!plan) {
+      return res.status(400).json({ error: `Plan '${productId || 'tricher'}' not found` });
+    }
+
+    // Validate amount
+    if (!calc.final || calc.final <= 0) {
+      return res.status(400).json({ error: 'Invalid order amount' });
+    }
 
     const rzpOrder = await razorpay.orders.create({
-      amount: calc.final * 100,
+      amount: Math.round(calc.final * 100), // Convert to paise and round
       currency: 'INR',
       receipt: `rcpt_${Date.now()}`,
     });
@@ -169,7 +247,7 @@ router.post('/create-order', async (req, res) => {
       user: user._id,
       plan: plan?._id,
       paymentMethod: paymentMethod || 'online',
-      amount: originalPrice,
+      amount: orderAmount,
       finalAmount: calc.final,
       address,
       status: 'created',
@@ -269,7 +347,7 @@ router.post('/verify-payment', async (req, res) => {
     const order = await Order.findOne({
       _id: orderId,
       razorpayOrderId: razorpay_order_id,
-    });
+    }).populate('user').populate('plan');
 
     if (!order) return res.status(404).json({ error: 'Order not found' });
 
@@ -294,6 +372,88 @@ router.post('/verify-payment', async (req, res) => {
       );
     }
 
+    // Create Shiprocket Shipment
+    let shiprocketShipment = null;
+    try {
+      const user = await User.findById(order.user);
+      console.log('🔍 ShipRocket check for order:', order._id);
+      console.log('   User pincode:', user?.pincode);
+      console.log('   User address:', user?.address);
+      console.log('   User city:', user?.city);
+      
+      if (user && user.pincode && user.address) {
+        console.log('📦 Creating Shiprocket shipment for order:', order._id);
+        
+        const shipmentData = {
+          name: user.name || 'Customer',
+          email: user.email,
+          phone: user.mobile || '9999999999',
+          address: user.address,
+          city: user.city || 'Unknown',
+          state: user.state || 'Unknown',
+          pincode: user.pincode,
+          orderAmount: order.finalAmount,
+          paymentMode: order.paymentMethod === 'cod' ? 'COD' : 'Prepaid',
+          productName: `Tricher ${order.plan?.name || 'Product'}`,
+          quantity: 1,
+          weight: 0.5, // 500 grams
+          orderId: order._id.toString(),
+        };
+
+        shiprocketShipment = await shiprocket.createShipment(shipmentData);
+
+        if (shiprocketShipment.success) {
+          // Store shipment ID for later use
+          order.shiprocketOrderId = shiprocketShipment.orderId;
+          order.shiprocketShipmentId = shiprocketShipment.shipmentId;
+          
+          // Attempt to assign courier and get AWB
+          const courierAssignment = await shiprocket.assignCourier(shiprocketShipment.shipmentId);
+          
+          if (courierAssignment.success) {
+            order.shiprocketAwb = courierAssignment.awb;
+            order.shiprocketTrackingUrl = courierAssignment.trackingUrl;
+            order.shipmentStatus = 'shipped';
+            
+            console.log('✅ AWB assigned:', courierAssignment.awb);
+            
+            // Generate label and pickup asynchronously (don't wait for them)
+            Promise.all([
+              shiprocket.generateLabel(shiprocketShipment.shipmentId).catch(err => 
+                console.warn('⚠️ Label generation failed:', err)
+              ),
+              shiprocket.generatePickup(shiprocketShipment.shipmentId).catch(err => 
+                console.warn('⚠️ Pickup generation failed:', err)
+              ),
+            ]).catch(err => console.warn('⚠️ Post-shipment tasks failed:', err));
+          } else {
+            console.warn('⚠️ Courier assignment pending:', courierAssignment.error);
+            order.shipmentStatus = 'awaiting_awb';
+          }
+          
+          await order.save();
+        } else {
+          console.error('❌ Shiprocket shipment creation failed:', shiprocketShipment.error);
+          order.shipmentStatus = 'failed';
+          await order.save();
+        }
+      } else {
+        console.warn('⚠️ Missing user shipping details, skipping Shiprocket shipment');
+        order.shipmentStatus = 'pending';
+        await order.save();
+      }
+    } catch (shiprocketErr) {
+      console.error('❌ SHIPROCKET SHIPMENT ERROR:', shiprocketErr);
+      // Don't fail the payment verification if shipment creation fails
+      order.shipmentStatus = 'error';
+      try {
+        await order.save();
+      } catch (saveErr) {
+        console.error('Failed to save error status:', saveErr);
+      }
+    }
+
+    // Send confirmation and tracking email
     try {
       const user = await User.findById(order.user);
 
@@ -302,17 +462,109 @@ router.post('/verify-payment', async (req, res) => {
       } else if (!mailTransporter) {
         console.warn('⚠️ SMTP not ready, skipping mail');
       } else {
-        console.log('📤 Sending onboarding email to:', user.email);
+        console.log('📤 Sending order confirmation email to:', user.email);
+
+        const trackingSection = order.shiprocketAwb
+          ? `
+            <div style="margin: 20px 0; padding: 15px; background-color: #dcfce7; border-left: 4px solid #16a34a; border-radius: 4px;">
+              <h3 style="margin: 0 0 10px 0; color: #15803d; font-size: 16px;">✅ Shipment Ready for Pickup</h3>
+              <p style="margin: 5px 0; font-size: 14px;"><strong>Tracking Number (AWB):</strong> <span style="font-family: monospace; font-weight: bold; color: #1f2937;">${order.shiprocketAwb}</span></p>
+              <p style="margin: 10px 0 0 0; font-size: 14px;">
+                <a href="${order.shiprocketTrackingUrl}" 
+                   style="display: inline-block; padding: 10px 20px; background-color: #16a34a; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">
+                  📍 Track Your Shipment
+                </a>
+              </p>
+              <p style="margin: 10px 0 0 0; font-size: 12px; color: #166534;">
+                You can track your shipment status, delivery updates, and current location using the AWB number above.
+              </p>
+            </div>
+          `
+          : order.shipmentStatus === 'awaiting_awb'
+          ? `
+            <div style="margin: 20px 0; padding: 15px; background-color: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px;">
+              <h3 style="margin: 0 0 10px 0; color: #92400e;">⏳ Shipment Processing</h3>
+              <p style="margin: 5px 0; font-size: 14px;">Your order is being prepared. AWB tracking number will be sent to you shortly.</p>
+              <p style="margin: 10px 0 0 0; font-size: 12px; color: #78350f;">
+                Check back in a few hours or we'll send you an update email with the tracking number.
+              </p>
+            </div>
+          `
+          : `
+            <div style="margin: 20px 0; padding: 15px; background-color: #f3f4f6; border-left: 4px solid #9ca3af; border-radius: 4px;">
+              <p style="margin: 0; font-size: 14px; color: #6b7280;">Your shipment will be processed soon. Tracking details will be sent via email.</p>
+            </div>
+          `;
 
         const info = await mailTransporter.sendMail({
           from: FROM_EMAIL,
           to: user.email,
-          subject: 'Welcome to Tricher – Order Confirmed',
+          subject: order.shiprocketAwb 
+            ? `🚚 Your Tricher Order #${order._id.toString().slice(-6)} is Ready to Ship!`
+            : `🎉 Order Confirmed - Tricher #${order._id.toString().slice(-6)}`,
           html: `
-            <h2>Welcome to Tricher 👋</h2>
-            <p>Hi ${user.name || ''},</p>
-            <p>Your order <strong>${order._id}</strong> has been successfully confirmed.</p>
-            <p>Thank you for choosing Tricher.</p>
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; color: #374151;">
+              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0; color: white;">
+                <h1 style="margin: 0; font-size: 28px;">🎉 Order Confirmed!</h1>
+              </div>
+              
+              <div style="padding: 30px; background-color: white;">
+                <p style="margin: 0 0 20px 0; font-size: 16px;">Hi <strong>${user.name || 'Customer'}</strong>,</p>
+                <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.6;">Your order has been successfully ${order.shiprocketAwb ? 'confirmed and is ready for shipment!' : 'confirmed! We are preparing it for dispatch.'}</p>
+                
+                <div style="margin: 20px 0; padding: 15px; background-color: #f9fafb; border-radius: 6px; border-left: 4px solid #667eea;">
+                  <h3 style="margin: 0 0 12px 0; color: #374151; font-size: 14px;">📋 Order Details</h3>
+                  <table style="width: 100%; font-size: 14px;">
+                    <tr>
+                      <td style="padding: 5px 0;"><strong>Order ID:</strong></td>
+                      <td style="padding: 5px 0; text-align: right; font-family: monospace; color: #667eea;"><strong>#${order._id.toString().slice(-8)}</strong></td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 5px 0;"><strong>Product:</strong></td>
+                      <td style="padding: 5px 0; text-align: right;">${order.plan?.description || 'Tricher Product'}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 5px 0;"><strong>Amount Paid:</strong></td>
+                      <td style="padding: 5px 0; text-align: right;"><strong style="color: #059669;">₹${order.finalAmount}</strong></td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 5px 0;"><strong>Payment Method:</strong></td>
+                      <td style="padding: 5px 0; text-align: right;">${order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Prepaid'}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 5px 0;"><strong>Order Date:</strong></td>
+                      <td style="padding: 5px 0; text-align: right;">${new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+                    </tr>
+                  </table>
+                </div>
+
+                ${trackingSection}
+
+                <div style="margin: 20px 0; padding: 15px; background-color: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 6px;">
+                  <h3 style="margin: 0 0 8px 0; color: #92400e; font-size: 14px;">📍 Delivery Address</h3>
+                  <p style="margin: 0; font-size: 13px; line-height: 1.6;">
+                    ${user.address || 'N/A'}<br/>
+                    ${user.city || ''} ${user.pincode || ''}
+                  </p>
+                </div>
+
+                <div style="margin: 20px 0; padding: 15px; background-color: #dbeafe; border-left: 4px solid #3b82f6; border-radius: 6px;">
+                  <h3 style="margin: 0 0 8px 0; color: #1e40af; font-size: 14px;">❓ What's Next?</h3>
+                  <ul style="margin: 0; padding-left: 20px; font-size: 13px;">
+                    <li style="margin: 5px 0;">Courier will pick up your order within 24 hours</li>
+                    <li style="margin: 5px 0;">You'll receive real-time delivery updates</li>
+                    <li style="margin: 5px 0;">Expected delivery: 3-5 business days (may vary)</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div style="padding: 20px; background-color: #f3f4f6; text-align: center; border-radius: 0 0 8px 8px; font-size: 12px; color: #6b7280;">
+                <p style="margin: 0 0 10px 0;">If you have any questions, feel free to contact our support team.</p>
+                <p style="margin: 0; border-top: 1px solid #d1d5db; padding-top: 10px;">
+                  © ${new Date().getFullYear()} Tricher. All rights reserved.
+                </p>
+              </div>
+            </div>
           `,
         });
 
@@ -322,9 +574,246 @@ router.post('/verify-payment', async (req, res) => {
       console.error('❌ EMAIL ERROR:', mailErr);
     }
 
-    res.json({ ok: true });
+    res.json({ 
+      ok: true,
+      trackingInfo: shiprocketShipment?.success && order.shiprocketAwb ? {
+        awb: order.shiprocketAwb,
+        trackingUrl: order.shiprocketTrackingUrl,
+      } : null,
+    });
   } catch (err) {
     console.error('❌ VERIFY PAYMENT ERROR:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* =========================
+   CONFIRM COD ORDER
+========================= */
+router.post('/confirm-cod-order', async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    if (!orderId) {
+      return res.status(400).json({ error: 'Order ID required' });
+    }
+
+    const order = await Order.findById(orderId).populate('user').populate('plan');
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    if (order.paymentMethod !== 'cod') {
+      return res.status(400).json({ error: 'This endpoint is only for COD orders' });
+    }
+
+    // Update order status
+    order.status = 'active';
+    await order.save();
+
+    console.log('📦 COD ORDER CONFIRMED:', order._id);
+
+    // Apply coupon if present
+    if (order.couponCode) {
+      await CouponUsage.create({
+        coupon_code: order.couponCode,
+        user_id: order.user,
+        order_id: order._id,
+        amount: order.finalAmount
+      });
+
+      await Coupon.findOneAndUpdate(
+        { code: order.couponCode },
+        { $inc: { used_count: 1 } }
+      );
+    }
+
+    // Create Shiprocket Shipment for COD
+    let shiprocketShipment = null;
+    try {
+      const user = await User.findById(order.user);
+      console.log('🔍 COD: ShipRocket check for order:', order._id);
+      console.log('   User pincode:', user?.pincode);
+      console.log('   User address:', user?.address);
+      console.log('   User city:', user?.city);
+      
+      if (user && user.pincode && user.address) {
+        console.log('📦 Creating Shiprocket COD shipment for order:', order._id);
+        
+        const shipmentData = {
+          name: user.name || 'Customer',
+          email: user.email,
+          phone: user.mobile || '9999999999',
+          address: user.address,
+          city: user.city || 'Unknown',
+          state: user.state || 'Unknown',
+          pincode: user.pincode,
+          orderAmount: order.finalAmount,
+          paymentMode: 'COD',
+          productName: `Tricher ${order.plan?.name || 'Product'}`,
+          quantity: 1,
+          weight: 0.5,
+          orderId: order._id.toString(),
+        };
+
+        shiprocketShipment = await shiprocket.createShipment(shipmentData);
+
+        if (shiprocketShipment.success) {
+          // Assign courier to shipment
+          const courierAssignment = await shiprocket.assignCourier(shiprocketShipment.shipmentId);
+          
+          if (courierAssignment.success) {
+            order.shiprocketOrderId = shiprocketShipment.orderId;
+            order.shiprocketShipmentId = shiprocketShipment.shipmentId;
+            order.shiprocketAwb = courierAssignment.awb;
+            order.shiprocketTrackingUrl = courierAssignment.trackingUrl;
+            order.shipmentStatus = 'shipped';
+            
+            // Generate label and pickup
+            await Promise.all([
+              shiprocket.generateLabel(shiprocketShipment.shipmentId),
+              shiprocket.generatePickup(shiprocketShipment.shipmentId),
+            ]);
+          }
+          
+          await order.save();
+          console.log('✅ Shiprocket COD shipment created with AWB:', courierAssignment?.awb || 'pending');
+        }
+      }
+    } catch (shiprocketErr) {
+      console.error('❌ SHIPROCKET SHIPMENT ERROR:', shiprocketErr);
+    }
+
+    // Send confirmation email
+    try {
+      const user = await User.findById(order.user);
+
+      if (user?.email && mailTransporter) {
+        console.log('📤 Sending COD order confirmation email to:', user.email);
+
+        const trackingSection = order.shiprocketAwb
+          ? `
+            <div style="margin: 20px 0; padding: 15px; background-color: #dcfce7; border-left: 4px solid #16a34a; border-radius: 4px;">
+              <h3 style="margin: 0 0 10px 0; color: #15803d; font-size: 16px;">✅ Shipment Ready for Pickup</h3>
+              <p style="margin: 5px 0; font-size: 14px;"><strong>Tracking Number (AWB):</strong> <span style="font-family: monospace; font-weight: bold; color: #1f2937;">${order.shiprocketAwb}</span></p>
+              <p style="margin: 10px 0 0 0; font-size: 14px;">
+                <a href="${order.shiprocketTrackingUrl}" 
+                   style="display: inline-block; padding: 10px 20px; background-color: #16a34a; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">
+                  📍 Track Your Shipment
+                </a>
+              </p>
+              <p style="margin: 10px 0 0 0; font-size: 12px; color: #166534;">
+                You can track your shipment status, delivery updates, and current location using the AWB number above.
+              </p>
+            </div>
+          `
+          : order.shipmentStatus === 'awaiting_awb'
+          ? `
+            <div style="margin: 20px 0; padding: 15px; background-color: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px;">
+              <h3 style="margin: 0 0 10px 0; color: #92400e;">⏳ Shipment Processing</h3>
+              <p style="margin: 5px 0; font-size: 14px;">Your order is being prepared. AWB tracking number will be sent to you shortly.</p>
+              <p style="margin: 10px 0 0 0; font-size: 12px; color: #78350f;">
+                Check back in a few hours or we'll send you an update email with the tracking number.
+              </p>
+            </div>
+          `
+          : `
+            <div style="margin: 20px 0; padding: 15px; background-color: #f3f4f6; border-left: 4px solid #9ca3af; border-radius: 4px;">
+              <p style="margin: 0; font-size: 14px; color: #6b7280;">Your shipment will be processed soon. Tracking details will be sent via email.</p>
+            </div>
+          `;
+
+        await mailTransporter.sendMail({
+          from: FROM_EMAIL,
+          to: user.email,
+          subject: `🚚 COD Order Confirmed #${order._id.toString().slice(-6)}`,
+          html: `
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; color: #374151;">
+              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0; color: white;">
+                <h1 style="margin: 0; font-size: 28px;">✅ COD Order Placed!</h1>
+              </div>
+              
+              <div style="padding: 30px; background-color: white;">
+                <p style="margin: 0 0 20px 0; font-size: 16px;">Hi <strong>${user.name || 'Customer'}</strong>,</p>
+                <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.6;">Your Cash on Delivery order has been confirmed and is ready for shipment!</p>
+                
+                <div style="margin: 20px 0; padding: 15px; background-color: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 6px;">
+                  <h3 style="margin: 0 0 10px 0; color: #92400e; font-size: 14px;">💰 Payment on Delivery</h3>
+                  <p style="margin: 0; font-size: 14px;"><strong style="font-size: 18px; color: #78350f;">₹${order.finalAmount}</strong></p>
+                  <p style="margin: 5px 0 0 0; font-size: 12px; color: #78350f;">
+                    Please keep the exact amount ready for the delivery person.
+                  </p>
+                </div>
+
+                <div style="margin: 20px 0; padding: 15px; background-color: #f9fafb; border-radius: 6px; border-left: 4px solid #667eea;">
+                  <h3 style="margin: 0 0 12px 0; color: #374151; font-size: 14px;">📋 Order Details</h3>
+                  <table style="width: 100%; font-size: 14px;">
+                    <tr>
+                      <td style="padding: 5px 0;"><strong>Order ID:</strong></td>
+                      <td style="padding: 5px 0; text-align: right; font-family: monospace; color: #667eea;"><strong>#${order._id.toString().slice(-8)}</strong></td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 5px 0;"><strong>Product:</strong></td>
+                      <td style="padding: 5px 0; text-align: right;">${order.plan?.description || 'Tricher Product'}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 5px 0;"><strong>Payment Method:</strong></td>
+                      <td style="padding: 5px 0; text-align: right;">Cash on Delivery</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 5px 0;"><strong>Order Date:</strong></td>
+                      <td style="padding: 5px 0; text-align: right;">${new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+                    </tr>
+                  </table>
+                </div>
+
+                ${trackingSection}
+
+                <div style="margin: 20px 0; padding: 15px; background-color: #dbeafe; border-left: 4px solid #3b82f6; border-radius: 6px;">
+                  <h3 style="margin: 0 0 8px 0; color: #1e40af; font-size: 14px;">❓ What's Next?</h3>
+                  <ul style="margin: 0; padding-left: 20px; font-size: 13px;">
+                    <li style="margin: 5px 0;">Courier will pick up your order within 24 hours</li>
+                    <li style="margin: 5px 0;">You'll receive real-time delivery updates</li>
+                    <li style="margin: 5px 0;">Expected delivery: 3-5 business days</li>
+                    <li style="margin: 5px 0;">Keep the exact amount ready for payment</li>
+                  </ul>
+                </div>
+
+                <div style="margin: 20px 0; padding: 15px; background-color: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 6px;">
+                  <h3 style="margin: 0 0 8px 0; color: #92400e; font-size: 14px;">📍 Delivery Address</h3>
+                  <p style="margin: 0; font-size: 13px; line-height: 1.6;">
+                    ${user.address || 'N/A'}<br/>
+                    ${user.city || ''} ${user.pincode || ''}
+                  </p>
+                </div>
+              </div>
+
+              <div style="padding: 20px; background-color: #f3f4f6; text-align: center; border-radius: 0 0 8px 8px; font-size: 12px; color: #6b7280;">
+                <p style="margin: 0 0 10px 0;">If you have any questions, feel free to contact our support team.</p>
+                <p style="margin: 0; border-top: 1px solid #d1d5db; padding-top: 10px;">
+                  © ${new Date().getFullYear()} Tricher. All rights reserved.
+                </p>
+              </div>
+            </div>
+          `,
+        });
+
+        console.log('✅ COD confirmation email sent');
+      }
+    } catch (mailErr) {
+      console.error('❌ EMAIL ERROR:', mailErr);
+    }
+
+    res.json({ 
+      ok: true,
+      trackingInfo: shiprocketShipment?.success && order.shiprocketAwb ? {
+        awb: order.shiprocketAwb,
+        trackingUrl: order.shiprocketTrackingUrl,
+      } : null,
+    });
+  } catch (err) {
+    console.error('❌ CONFIRM COD ORDER ERROR:', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -354,6 +843,165 @@ router.get('/test-email', async (req, res) => {
   }
 });
 
+/* =========================
+   GET ORDER TRACKING INFO
+========================= */
+router.get('/track-order/:orderId', async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const order = await Order.findById(orderId).populate('user').populate('plan');
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    // If order has Shiprocket tracking, fetch latest status
+    let trackingData = null;
+    if (order.shiprocketAwb) {
+      try {
+        trackingData = await shiprocket.trackShipment(order.shiprocketAwb);
+      } catch (trackErr) {
+        console.error('❌ Tracking fetch error:', trackErr);
+      }
+    }
+
+    res.json({
+      orderId: order._id,
+      status: order.status,
+      shipmentStatus: order.shipmentStatus,
+      amount: order.finalAmount,
+      paymentMethod: order.paymentMethod,
+      createdAt: order.createdAt,
+      tracking: {
+        awb: order.shiprocketAwb,
+        trackingUrl: order.shiprocketTrackingUrl,
+        liveStatus: trackingData?.data || null,
+      },
+      plan: {
+        name: order.plan?.name,
+        description: order.plan?.description,
+      },
+    });
+  } catch (err) {
+    console.error('❌ TRACK ORDER ERROR:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* =========================
+   RESEND TRACKING EMAIL (when AWB is assigned later)
+========================= */
+router.post('/resend-tracking-email/:orderId', async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const order = await Order.findById(orderId).populate('user').populate('plan');
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    if (!order.shiprocketAwb) {
+      return res.status(400).json({ error: 'No AWB assigned yet. Tracking not available.' });
+    }
+
+    const user = await User.findById(order.user);
+
+    if (!user?.email) {
+      return res.status(400).json({ error: 'User email not found' });
+    }
+
+    if (!mailTransporter) {
+      return res.status(500).json({ error: 'Email service not configured' });
+    }
+
+    // Send tracking email
+    const info = await mailTransporter.sendMail({
+      from: FROM_EMAIL,
+      to: user.email,
+      subject: `🚚 Your Tricher Order Tracking Details #${order._id.toString().slice(-6)}`,
+      html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; color: #374151;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0; color: white;">
+            <h1 style="margin: 0; font-size: 28px;">📦 Shipment Assigned!</h1>
+          </div>
+          
+          <div style="padding: 30px; background-color: white;">
+            <p style="margin: 0 0 20px 0; font-size: 16px;">Hi <strong>${user.name || 'Customer'}</strong>,</p>
+            <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.6;">Great news! Your shipment has been assigned a courier and is ready for pickup!</p>
+            
+            <div style="margin: 20px 0; padding: 15px; background-color: #dcfce7; border-left: 4px solid #16a34a; border-radius: 4px;">
+              <h3 style="margin: 0 0 10px 0; color: #15803d; font-size: 16px;">✅ Shipment Ready</h3>
+              <p style="margin: 5px 0; font-size: 14px;"><strong>Order ID:</strong> <span style="font-family: monospace; color: #667eea;">#${order._id.toString().slice(-8)}</span></p>
+              <p style="margin: 5px 0; font-size: 14px;"><strong>Tracking Number (AWB):</strong> <span style="font-family: monospace; font-weight: bold; font-size: 16px; color: #1f2937;">${order.shiprocketAwb}</span></p>
+            </div>
+
+            <div style="margin: 20px 0; padding: 15px; background-color: #dbeafe; border-left: 4px solid #3b82f6; border-radius: 4px;">
+              <p style="margin: 0;">
+                <a href="${order.shiprocketTrackingUrl}" 
+                   style="display: inline-block; padding: 12px 24px; background-color: #3b82f6; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px;">
+                  📍 Track Your Shipment Live
+                </a>
+              </p>
+              <p style="margin: 10px 0 0 0; font-size: 12px; color: #1e40af;">
+                Click the link above to track your shipment in real-time. You'll see updates for pickup, in-transit, and delivery.
+              </p>
+            </div>
+
+            <div style="margin: 20px 0; padding: 15px; background-color: #f9fafb; border-radius: 6px; border-left: 4px solid #667eea;">
+              <h3 style="margin: 0 0 12px 0; color: #374151; font-size: 14px;">📦 Delivery Details</h3>
+              <table style="width: 100%; font-size: 13px;">
+                <tr>
+                  <td style="padding: 5px 0;"><strong>Recipient:</strong></td>
+                  <td style="padding: 5px 0; text-align: right;">${user.name || 'Customer'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 5px 0;"><strong>Address:</strong></td>
+                  <td style="padding: 5px 0; text-align: right; word-break: break-word;">${user.address || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 5px 0;"><strong>City/Pincode:</strong></td>
+                  <td style="padding: 5px 0; text-align: right;">${user.city || ''} ${user.pincode || ''}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 5px 0;"><strong>Expected Delivery:</strong></td>
+                  <td style="padding: 5px 0; text-align: right;">3-5 business days</td>
+                </tr>
+              </table>
+            </div>
+
+            <div style="margin: 20px 0; padding: 15px; background-color: #f3f4f6; border-radius: 4px;">
+              <p style="margin: 0; font-size: 12px; color: #6b7280;">
+                <strong>Pro Tip:</strong> Bookmark this email or save the AWB number for quick reference. You can also track your shipment using just the AWB number on the carrier's website.
+              </p>
+            </div>
+          </div>
+
+          <div style="padding: 20px; background-color: #f3f4f6; text-align: center; border-radius: 0 0 8px 8px; font-size: 12px; color: #6b7280;">
+            <p style="margin: 0 0 10px 0;">For support, reply to this email or contact us at support@tricher.app</p>
+            <p style="margin: 0; border-top: 1px solid #d1d5db; padding-top: 10px;">
+              © ${new Date().getFullYear()} Tricher. All rights reserved.
+            </p>
+          </div>
+        </div>
+      `,
+    });
+
+    console.log('✅ TRACKING EMAIL RESENT:', info.messageId);
+
+    res.json({
+      ok: true,
+      message: 'Tracking email sent successfully',
+      awb: order.shiprocketAwb,
+      trackingUrl: order.shiprocketTrackingUrl,
+    });
+  } catch (err) {
+    console.error('❌ RESEND TRACKING EMAIL ERROR:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
 
 /* =========================
@@ -362,6 +1010,7 @@ module.exports = router;
    - POST /verify-otp { email, otp }
    Note: simple in-memory store with expiry for demo purposes.
 ========================= */
+
 
 const otpStore = new Map(); // email -> { code, expiresAt }
 
@@ -457,3 +1106,48 @@ router.post('/verify-otp', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+/* =========================
+   DEBUG: Test Shiprocket API
+========================= */
+router.get('/shiprocket-debug', async (req, res) => {
+  try {
+    if (!process.env.SHIPROCKET_EMAIL || !process.env.SHIPROCKET_PASSWORD) {
+      return res.status(400).json({
+        error: 'Shiprocket credentials not configured',
+        required: ['SHIPROCKET_EMAIL', 'SHIPROCKET_PASSWORD'],
+      });
+    }
+
+    // Test authentication
+    console.log('🔍 TEST 1: Testing Shiprocket authentication...');
+    const token = await shiprocket.getAuthToken();
+
+    // Test pincode serviceability
+    console.log('🔍 TEST 2: Testing pincode serviceability for 530043...');
+    const serviceabilityTest = await shiprocket.checkPincodeServiceability('530043');
+
+    res.json({
+      status: 'debug',
+      config: {
+        email: process.env.SHIPROCKET_EMAIL,
+        pickupLocationId: process.env.SHIPROCKET_PICKUP_LOCATION_ID || 'Not Set',
+        tokenGenerated: !!token,
+      },
+      tests: {
+        authentication: {
+          status: 'success',
+          message: 'Connected to Shiprocket API',
+        },
+        serviceability: serviceabilityTest,
+      },
+    });
+  } catch (error) {
+    console.error('❌ Debug Error:', error.message);
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data,
+    });
+  }
+});
+
+module.exports = router;

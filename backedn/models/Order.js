@@ -13,6 +13,16 @@ const OrderSchema = new mongoose.Schema({
   razorpaySignature: { type: String },
   couponCode: { type: String },
   finalAmount: { type: Number },
+  // delhivery fields
+  delhiveryWaybill: { type: String }, // Tracking number
+  delhiveryOrderId: { type: String }, // Delhivery order ID
+  delhiveryTrackingUrl: { type: String }, // Full tracking URL
+  // shiprocket fields
+  shiprocketOrderId: { type: String },
+  shiprocketShipmentId: { type: String },
+  shiprocketAwb: { type: String }, // AWB tracking number
+  shiprocketTrackingUrl: { type: String }, // Full tracking URL
+  shipmentStatus: { type: String, default: 'pending' }, // pending, shipped, delivered, etc.
   createdAt: { type: Date, default: Date.now }
 });
 
