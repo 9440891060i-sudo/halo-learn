@@ -10,7 +10,7 @@ const commands = [
 
 const VoiceCommands = () => {
   return (
-    <section className="py-32 lg:py-40 bg-background">
+    <section className="py-22 lg:py-40 bg-background">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

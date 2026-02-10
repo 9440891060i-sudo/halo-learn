@@ -8,7 +8,12 @@ const UserSchema = new mongoose.Schema({
   city: { type: String },
   state: { type: String },
   pincode: { type: String },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  isLoggedIn: { type: Boolean, default: false },
+  activeDeviceId: { type: String },
+  activeSessionId: { type: String },
+  lastLoginAt: { type: Date },
+  lastLogoutAt: { type: Date }
 });
 
 module.exports = mongoose.model('User', UserSchema);

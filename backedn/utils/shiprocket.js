@@ -185,8 +185,10 @@ async function assignCourier(shipmentId, courierId = null) {
       { headers }
     );
 
-    if (response.data.success || response.data.awb_code) {
-      const data = response.data.data || response.data;
+    const responseData = response.data;
+    const data = responseData?.data || responseData;
+
+    if (responseData?.success || data?.awb_code) {
       console.log('✅ Courier assigned, AWB:', data.awb_code);
 
       return {
@@ -195,20 +197,38 @@ async function assignCourier(shipmentId, courierId = null) {
         courierName: data.courier_name,
         courierCompanyId: data.courier_company_id,
         trackingUrl: `https://track.shiprocket.in/${data.awb_code}`,
-        message: data.message || 'AWB assigned successfully',
+        message: data?.message || 'AWB assigned successfully',
       };
     } else {
-      console.error('❌ ASSIGN COURIER ERROR:', response.data.message);
+      const errorMessage =
+        responseData?.message ||
+        data?.message ||
+        responseData?.errors?.[0] ||
+        responseData?.errors?.message ||
+        responseData?.errors?.error ||
+        'Failed to assign courier';
+
+      console.error('❌ ASSIGN COURIER ERROR:', errorMessage);
+      console.error('   Full response:', JSON.stringify(responseData, null, 2));
       return {
         success: false,
-        error: response.data.message,
+        error: errorMessage,
+        details: responseData,
       };
     }
   } catch (error) {
-    console.error('❌ SHIPROCKET ASSIGN COURIER ERROR:', error.response?.data || error.message);
+    const responseData = error.response?.data;
+    const errorMessage =
+      responseData?.message ||
+      responseData?.errors?.[0] ||
+      responseData?.errors?.message ||
+      error.message;
+
+    console.error('❌ SHIPROCKET ASSIGN COURIER ERROR:', responseData || error.message);
     return {
       success: false,
-      error: error.response?.data?.message || error.message,
+      error: errorMessage,
+      details: responseData,
     };
   }
 }

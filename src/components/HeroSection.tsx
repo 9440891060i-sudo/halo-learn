@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, color } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import cheetahGlasses from "@/assets/cheetah-glasses.png";
 import { useEffect, useState, type TouchEvent } from "react";
@@ -8,6 +8,7 @@ import tre from "@/assets/IMG3.jpg";
 import four from "@/assets/Four.jpeg";
 import five from "@/assets/IMG5.jpg";
 import { useCarousel } from "@/contexts/CarouselContext"; 
+import { FaAmazon } from "react-icons/fa";
 const DOWNLOAD_LAUNCH_AT = new Date("2025-12-24T20:00:00+05:30");
 
 const HeroSection = () => {
@@ -113,7 +114,7 @@ const HeroSection = () => {
         )}
       </AnimatePresence>
 
-      <section className="relative md:min-h-screen hero-gradient overflow-hidden">
+      <section className="relative hero-gradient overflow-hidden">
         {/* Nav */}
         <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border/40">
           <div className="container flex items-center justify-between h-14">
@@ -132,7 +133,44 @@ const HeroSection = () => {
           </div>
         </nav>
 
-        <div className="container pt-28 flex flex-col items-center">
+        <div className="container pt-28 pb-0 flex flex-col items-center">
+          {/* Floating Amazon Pill */}
+          <motion.div
+            initial={{ y: 0 }}
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+            className="mb-7 fixed top-18  transform -translate-x-1/2"
+          >
+            <a
+              href="https://amzn.in/d/0cPg5exs"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Available on Amazon"
+              className="relative inline-flex items-center gap-2.5 pl-3 pr-5 py-1.5 rounded-xl bg-[#f79400] text-white border border-white/10 text-xs sm:text-sm font-light tracking-wide shadow-[0_0_20px_rgba(247,148,0,0.25)]"
+            >
+              <span className="absolute -inset-1 rounded-xl bg-white/10 blur-lg opacity-60" aria-hidden="true" />
+              <motion.span
+                className="absolute inset-0 rounded-xl opacity-40 pointer-events-none"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.5) 35%, transparent 70%)",
+                  backgroundSize: "200% 100%",
+                }}
+                animate={{ backgroundPosition: ["0% 50%", "200% 50%"] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
+                aria-hidden="true"
+              />
+              <motion.span
+                className="absolute -right-2 -top-2 w-2.5 h-2.5 rounded-full bg-white/70"
+                animate={{ y: [0, -4, 0], opacity: [0.7, 1, 0.7] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+                aria-hidden="true"
+              />
+              <FaAmazon className="w-4 h-4 text-black" />
+              <span className="relative" style={{ color: "black" }}>Available on Amazon</span>
+            </a>
+          </motion.div>
+
           {/* Text */}
           <div className="text-center space-y-3 max-w-4xl">
             <h1 className="text-[clamp(2.5rem,6vw,6rem)] leading-[1.08] tracking-tight">
@@ -148,9 +186,9 @@ const HeroSection = () => {
           </div>
 
           {/* HERO IMAGE CAROUSEL - Clean & Minimal */}
-          <div className="mt-12 w-full px-4 md:px-0 max-w-5xl">
+          <div className="mt-6 w-full px-4 md:px-0 max-w-5xl mb-0">
             <div
-              className="relative w-full bg-gradient-to-b from-transparent via-muted/5 to-transparent rounded-3xl overflow-hidden group"
+              className="relative w-full bg-gradient-to-b from-transparent via-muted/5 to-transparent rounded-3xl overflow-hidden group h-full min-h-[190px] md:min-h-[420px] lg:min-h-[500px]"
               onTouchStart={(e: TouchEvent) => {
                 setTouchStart(e.touches[0].clientX);
                 setIsAutoplayPaused(true);
@@ -180,16 +218,12 @@ const HeroSection = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.4 }}
-                  className="w-full"
+                  className="w-full h-full flex items-center justify-center"
                 >
                   <img
                     src={images[currentIndex]}
                     alt={`Product view ${currentIndex + 1}`}
-                    className={`w-full object-contain ${
-                      currentIndex === 0
-                        ? 'max-h-[600px]'
-                        : 'md:max-h-[450px] max-h-[800px]'
-                    }`}
+                    className="w-full h-full object-contain"
                   />
                 </motion.div>
               </AnimatePresence>

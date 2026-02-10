@@ -6,7 +6,7 @@ const Support = () => {
   const navigate = useNavigate();
 
   const supportEmail = "support@tricher.app";
-  const supportMobile = "+91 83281 66638";
+  const supportMobile = "+91 79897 82046";
 
   return (
     <div className="min-h-screen bg-background text-foreground">

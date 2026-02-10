@@ -1100,9 +1100,97 @@ router.post('/verify-otp', async (req, res) => {
       }
     }
 
-    res.json({ ok: true, userType });
+    res.json({
+      ok: true,
+      userType,
+      session: {
+        isLoggedIn: !!user?.isLoggedIn,
+        activeDeviceId: user?.activeDeviceId || null,
+        activeSessionId: user?.activeSessionId || null,
+      },
+    });
   } catch (err) {
     console.error('VERIFY OTP ERROR:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* =========================
+   LOGIN/LOGOUT SESSION (SINGLE DEVICE)
+   - POST /login-session { email, deviceId }
+   - POST /logout-session { email, deviceId }
+========================= */
+
+router.post('/login-session', async (req, res) => {
+  try {
+    const { email, deviceId } = req.body;
+    if (!email || !deviceId) {
+      return res.status(400).json({ error: 'Email and deviceId are required' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (user.isLoggedIn && user.activeDeviceId && user.activeDeviceId !== deviceId) {
+      return res.status(409).json({
+        error: 'Account already in use on another device',
+        activeDeviceId: user.activeDeviceId,
+      });
+    }
+
+    if (!user.activeSessionId) {
+      user.activeSessionId = `sess_${crypto.randomBytes(12).toString('hex')}`;
+    }
+
+    user.isLoggedIn = true;
+    user.activeDeviceId = deviceId;
+    user.lastLoginAt = new Date();
+    await user.save();
+
+    res.json({
+      ok: true,
+      session: {
+        activeSessionId: user.activeSessionId,
+        activeDeviceId: user.activeDeviceId,
+        isLoggedIn: user.isLoggedIn,
+      },
+    });
+  } catch (err) {
+    console.error('LOGIN SESSION ERROR:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/logout-session', async (req, res) => {
+  try {
+    const { email, deviceId } = req.body;
+    if (!email || !deviceId) {
+      return res.status(400).json({ error: 'Email and deviceId are required' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (user.isLoggedIn && user.activeDeviceId && user.activeDeviceId !== deviceId) {
+      return res.status(409).json({
+        error: 'Cannot logout: session belongs to another device',
+        activeDeviceId: user.activeDeviceId,
+      });
+    }
+
+    user.isLoggedIn = false;
+    user.activeDeviceId = null;
+    user.activeSessionId = null;
+    user.lastLogoutAt = new Date();
+    await user.save();
+
+    res.json({ ok: true, message: 'Logged out' });
+  } catch (err) {
+    console.error('LOGOUT SESSION ERROR:', err);
     res.status(500).json({ error: err.message });
   }
 });
