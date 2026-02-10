@@ -19,12 +19,14 @@ const PricingSection = () => {
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extralight mb-5">
             Pricing
           </h2>
+          {/*
           <p className="text-muted-foreground text-lg font-light">
             Two simple options
           </p>
+          */}
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        <div className="flex justify-center">
           {/* Smart Glasses + Free Subscription */}
           <motion.div
             initial={{ opacity: 0, y: 25 }}
@@ -75,7 +77,7 @@ const PricingSection = () => {
             </Button>
           </motion.div>
 
-          {/* AI Subscription Only */}
+          {/*
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -88,10 +90,9 @@ const PricingSection = () => {
               <h2 className="text-2xl font-light tracking-tight">
                 Access to Glass Owners
               </h2>
-             
             </div>
             <p className="text-muted-foreground text-sm font-light mb-10">Free Talk time 5min/day</p>
-            
+
             <ul className="space-y-4 mb-12 text-muted-foreground font-light">
               <li className="flex items-start gap-3">
                 <Check className="w-4 h-4 mt-1 text-foreground flex-shrink-0" strokeWidth={1.5} />
@@ -119,6 +120,7 @@ const PricingSection = () => {
               Renew
             </Button>
           </motion.div>
+          */}
         </div>
       </div>
     </section>

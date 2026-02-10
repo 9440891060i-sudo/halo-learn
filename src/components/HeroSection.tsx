@@ -122,6 +122,7 @@ const HeroSection = () => {
               Tricher
             </span>
 
+            {/*
             <Button
               variant="hero"
               size="sm"
@@ -130,47 +131,27 @@ const HeroSection = () => {
             >
               Download App
             </Button>
+            */}
+            <Button
+              asChild
+              variant="hero"
+              size="sm"
+              className="h-8 px-4 text-sm"
+            >
+              <a
+                href="https://amzn.in/d/0cPg5exs"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Available on Amazon"
+              >
+                <FaAmazon className="w-4 h-4" />
+                Available on Amazon
+              </a>
+            </Button>
           </div>
         </nav>
 
         <div className="container pt-28 pb-0 flex flex-col items-center">
-          {/* Floating Amazon Pill */}
-          <motion.div
-            initial={{ y: 0 }}
-            animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
-            className="mb-7 fixed top-18  transform -translate-x-1/2"
-          >
-            <a
-              href="https://amzn.in/d/0cPg5exs"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Available on Amazon"
-              className="relative inline-flex items-center gap-2.5 pl-3 pr-5 py-1.5 rounded-xl bg-[#f79400] text-white border border-white/10 text-xs sm:text-sm font-light tracking-wide shadow-[0_0_20px_rgba(247,148,0,0.25)]"
-            >
-              <span className="absolute -inset-1 rounded-xl bg-white/10 blur-lg opacity-60" aria-hidden="true" />
-              <motion.span
-                className="absolute inset-0 rounded-xl opacity-40 pointer-events-none"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.5) 35%, transparent 70%)",
-                  backgroundSize: "200% 100%",
-                }}
-                animate={{ backgroundPosition: ["0% 50%", "200% 50%"] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
-                aria-hidden="true"
-              />
-              <motion.span
-                className="absolute -right-2 -top-2 w-2.5 h-2.5 rounded-full bg-white/70"
-                animate={{ y: [0, -4, 0], opacity: [0.7, 1, 0.7] }}
-                transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-                aria-hidden="true"
-              />
-              <FaAmazon className="w-4 h-4 text-black" />
-              <span className="relative" style={{ color: "black" }}>Available on Amazon</span>
-            </a>
-          </motion.div>
-
           {/* Text */}
           <div className="text-center space-y-3 max-w-4xl">
             <h1 className="text-[clamp(2.5rem,6vw,6rem)] leading-[1.08] tracking-tight">

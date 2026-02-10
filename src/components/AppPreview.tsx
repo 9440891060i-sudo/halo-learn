@@ -47,7 +47,7 @@ const AppPreview = () => {
 
   const openVideo = () => {
     window.open(
-      "https://youtu.be/7MDeKxuZfQg?si=SgqA1K5ydh6Wyl24",
+      "https://www.instagram.com/reel/DThX9JxkUJx/?igsh=MTc5M3NsNW9lY3Y5ZA==",
       "_blank",
       "noopener,noreferrer"
     );
