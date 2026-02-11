@@ -141,13 +141,13 @@ const AppPreview = () => {
                 className="w-[400px]"
               />
 
-              <button
+              {/* <button
                 onClick={handleDownloadClick}
                 className="mt-6 text-sm text-muted-foreground group"
               >
                 Download App
                 <span className="block mt-2 w-12 scale-x-0 group-hover:scale-x-100 transition-transform border-b border-foreground/40" />
-              </button>
+              </button> */}
             </motion.div>
 
             {/* Steps */}
