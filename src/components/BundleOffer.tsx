@@ -27,6 +27,22 @@ const BundleOffer = () => {
             Unlock 6 months of Tricher AI for free today
           </h2>
 
+          <div className="w-full">
+            <div className="rounded-2xl border border-white/20 bg-white/10 px-6 py-6 text-left backdrop-blur-sm">
+              <h3 className="text-sm uppercase tracking-[0.35em] text-white/70 text-center">
+                Info
+              </h3>
+              <ul className="mt-4 space-y-2 text-sm sm:text-base text-white/90">
+                <li>Blue cut + UV + photochromic lenses</li>
+                <li>8hr battery life</li>
+                <li>Bluetooth connection enabled</li>
+                <li>Low HZ custom microphone</li>
+                <li>Directional speakers (adjustable volume)</li>
+                <li>AI access code enabled</li>
+              </ul>
+            </div>
+          </div>
+
 
           <motion.div
             whileHover={{ scale: 1.02 }}
@@ -48,6 +64,7 @@ const BundleOffer = () => {
                 className="text-white transition-transform duration-200 group-hover:translate-x-1"
               />
             </Button>
+            
 
           </motion.div>
         </motion.div>
