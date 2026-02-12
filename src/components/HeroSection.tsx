@@ -6,6 +6,7 @@ import one from "@/assets/IMG1.jpg";
 import two from "@/assets/IMG2.jpg";
 import tre from "@/assets/IMG3.jpg";
 import four from "@/assets/Four.jpeg";
+import newthree from "@/assets/new3.png";
 import five from "@/assets/IMG5.jpg";
 import { useCarousel } from "@/contexts/CarouselContext"; 
 import { FaAmazon } from "react-icons/fa";
@@ -18,7 +19,7 @@ const HeroSection = () => {
   const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
   const { currentIndex, setCurrentIndex } = useCarousel();
 
-  const images = [one, two, tre, four, five];
+  const images = [one, two, newthree, tre, four, five];
 
   useEffect(() => {
     const interval = setInterval(() => {
