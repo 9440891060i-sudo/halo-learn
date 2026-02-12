@@ -31,6 +31,7 @@ const BundleOffer = () => {
                 <li>Low HZ custom microphone</li>
                 <li>Directional speakers (adjustable volume)</li>
                 <li>AI access code enabled</li>
+                <li>Weighs 30gm</li>
               </ul>
             </div>
           </div>
