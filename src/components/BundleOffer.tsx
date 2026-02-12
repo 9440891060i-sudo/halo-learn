@@ -19,21 +19,13 @@ const BundleOffer = () => {
           transition={{ duration: 0.8 }}
           className="text-center max-w-3xl mx-auto space-y-6"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-background/10 text-xs font-extralight tracking-[0.15em] uppercase text-white">
-            Limited Time
-          </div>
-
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl">
-            Unlock 6 months of Tricher AI for free today
-          </h2>
-
           <div className="w-full">
             <div className="rounded-2xl border border-white/20 bg-white/10 px-6 py-6 text-left backdrop-blur-sm">
               <h3 className="text-sm uppercase tracking-[0.35em] text-white/70 text-center">
                 Info
               </h3>
               <ul className="mt-4 space-y-2 text-sm sm:text-base text-white/90">
-                <li>Blue cut + UV + photochromic lenses</li>
+                <li>Blue cut + UV + photochromic lenses (extra 2 pairs in box)</li>
                 <li>8hr battery life</li>
                 <li>Bluetooth connection enabled</li>
                 <li>Low HZ custom microphone</li>
@@ -42,6 +34,14 @@ const BundleOffer = () => {
               </ul>
             </div>
           </div>
+
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-background/10 text-xs font-extralight tracking-[0.15em] uppercase text-white">
+            Limited Time
+          </div>
+
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl">
+            Unlock 6 months of Tricher AI for free today
+          </h2>
 
 
           <motion.div
